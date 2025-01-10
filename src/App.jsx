@@ -6,7 +6,7 @@ import Footer from "./components/Footer";
 
 export default function App() {
   return (
-    <>
+    <div className="flex flex-col min-h-dvh">
       <Navbar></Navbar>
       <Switch>
         <Route path="/" component={Landing} />
@@ -16,9 +16,15 @@ export default function App() {
         </Route>
 
         {/* Default route in a switch */}
-        <Route>404: No such page!</Route>
+        <Route>
+          <div className="grid flex-grow px-4 bg-white place-content-center">
+            <h1 className="tracking-widest text-gray-500 uppercase">
+              404 | Not Found
+            </h1>
+          </div>
+        </Route>
       </Switch>
       <Footer></Footer>
-    </>
+    </div>
   );
 }

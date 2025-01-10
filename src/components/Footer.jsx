@@ -1,13 +1,14 @@
 import logo from "../assets/logo.png";
+import { Link } from "wouter";
 
 function Footer() {
   return (
-    <footer className="bg-base-200">
+    <footer className="">
       <div className="relative max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8 lg:pt-24">
         <div className="absolute end-4 top-4 sm:end-6 sm:top-6 lg:end-8 lg:top-8">
           <a
             className="inline-block p-2 text-white transition bg-[#00367E] rounded-full shadow hover:bg-[#00367E]/75 sm:p-3 lg:p-4"
-            href="#MainContent"
+            href="#nav"
           >
             <span className="sr-only">Back to top</span>
 
@@ -31,7 +32,7 @@ function Footer() {
             <div className="flex justify-center lg:justify-start">
               <img
                 src={logo}
-                className="max-lg:w-[250px] w-[150px]"
+                className="max-lg:w-[250px] w-[150px] bg-white rounded-full"
               />
             </div>
 
@@ -43,24 +44,21 @@ function Footer() {
 
           <ul className="flex flex-wrap justify-center gap-6 mt-12 md:gap-8 lg:mt-0 lg:justify-end lg:gap-12">
             <li>
-              <a className="transition hover:text-[#00367E]" href="#">
-                {" "}
-                Home{" "}
-              </a>
+              <Link className="transition hover:text-[#00367E]" href="/">
+                Home
+              </Link>
             </li>
 
             <li>
-              <a className="transition hover:text-[#00367E]" href="#">
-                {" "}
-                Sign Up{" "}
-              </a>
+              <Link className="transition hover:text-[#00367E]" href="/sign-up">
+                Sign Up
+              </Link>
             </li>
 
             <li>
-              <a className="transition hover:text-[#00367E]" href="#">
-                {" "}
-                Sign In{" "}
-              </a>
+              <Link className="transition hover:text-[#00367E]" href="/sign-in">
+                Sign In
+              </Link>
             </li>
 
           </ul>

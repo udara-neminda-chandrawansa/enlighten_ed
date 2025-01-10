@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import logo from "../assets/logo.png";
 import admin from "../assets/roles/admin.webp";
 import teacher from "../assets/roles/teacher.jpg";
@@ -24,8 +25,8 @@ function Landing() {
               collaborative, and fun.
             </p>
             <div className="flex gap-6">
-              <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Signup</button>
-              <button className="text-white btn btn-secondary">Sign In</button>
+              <Link href="/sign-up" className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</Link>
+              <Link href="/sign-in" className="text-white btn btn-secondary">Sign In</Link>
             </div>
           </div>
         </div>
@@ -54,7 +55,7 @@ function Landing() {
           <div className="flex items-center justify-center md:w-1/3">
             <img
               src={logo}
-              className="h-[200px] 2xl:h-[400px] w-full object-contain max-md:hidden"
+              className="h-[200px] 2xl:h-[400px] w-full object-contain max-md:hidden bg-white rounded-full"
             />
           </div>
         </div>
@@ -76,7 +77,7 @@ function Landing() {
               <h2 className="card-title">Admin</h2>
               <p>Manages a single institution</p>
               <div className="justify-end card-actions">
-                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
+                <Link href="/sign-up" className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</Link>
               </div>
             </div>
           </div>
@@ -96,7 +97,7 @@ function Landing() {
                 etc.
               </p>
               <div className="justify-end card-actions">
-                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
+                <Link href="/sign-up" className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</Link>
               </div>
             </div>
           </div>
@@ -113,7 +114,7 @@ function Landing() {
               <h2 className="card-title">Student</h2>
               <p>The learner</p>
               <div className="justify-end card-actions">
-                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
+                <Link href="/sign-up" className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</Link>
               </div>
             </div>
           </div>
@@ -130,7 +131,7 @@ function Landing() {
               <h2 className="card-title">Parent</h2>
               <p>Guardian / Caretaker of learner</p>
               <div className="justify-end card-actions">
-                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
+                <Link href="/sign-up" className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</Link>
               </div>
             </div>
           </div>
@@ -176,7 +177,7 @@ function Landing() {
       </div>
       {/*CTA*/}
 
-      <section className="overflow-hidden bg-base-100 sm:grid sm:grid-cols-2 sm:items-center">
+      <section className="overflow-hidden bg-base-300 sm:grid sm:grid-cols-2 sm:items-center">
         <div className="p-8 md:p-12 lg:px-16 lg:py-24">
           <div className="max-w-xl mx-auto text-center">
             <h2 className="text-2xl font-bold md:text-3xl sm:text-left">
@@ -189,11 +190,11 @@ function Landing() {
             </p>
 
             <div className="mt-4 md:mt-8 sm:text-left">
-              <button
+              <Link href="/sign-up"
                 className="inline-block px-12 py-3 text-sm font-medium text-white transition rounded bg-[#00367E] hover:bg-[#00367E]/75 focus:outline-none focus:ring focus:ring-yellow-400"
               >
                 Get Started Today
-              </button>
+              </Link>
             </div>
           </div>
         </div>
