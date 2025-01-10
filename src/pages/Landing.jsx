@@ -3,6 +3,7 @@ import admin from "../assets/roles/admin.webp";
 import teacher from "../assets/roles/teacher.jpg";
 import student from "../assets/roles/student.jpg";
 import parent from "../assets/roles/parent.webp";
+import cta_bg from "../assets/landing/cta_bg.jpg";
 
 function Landing() {
   return (
@@ -23,8 +24,8 @@ function Landing() {
               collaborative, and fun.
             </p>
             <div className="flex gap-6">
-              <button className="btn btn-primary">Signup</button>
-              <button className="btn btn-secondary">Sign In</button>
+              <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Signup</button>
+              <button className="text-white btn btn-secondary">Sign In</button>
             </div>
           </div>
         </div>
@@ -51,7 +52,10 @@ function Landing() {
             </p>
           </div>
           <div className="flex items-center justify-center md:w-1/3">
-            <img src={logo} className="h-[100px] 2xl:h-[300px] w-full object-contain max-md:hidden" />
+            <img
+              src={logo}
+              className="h-[200px] 2xl:h-[400px] w-full object-contain max-md:hidden"
+            />
           </div>
         </div>
       </div>
@@ -72,7 +76,7 @@ function Landing() {
               <h2 className="card-title">Admin</h2>
               <p>Manages a single institution</p>
               <div className="justify-end card-actions">
-                <button className="btn btn-primary">Sign Up</button>
+                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
               </div>
             </div>
           </div>
@@ -92,7 +96,7 @@ function Landing() {
                 etc.
               </p>
               <div className="justify-end card-actions">
-                <button className="btn btn-primary">Sign Up</button>
+                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
               </div>
             </div>
           </div>
@@ -109,7 +113,7 @@ function Landing() {
               <h2 className="card-title">Student</h2>
               <p>The learner</p>
               <div className="justify-end card-actions">
-                <button className="btn btn-primary">Sign Up</button>
+                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
               </div>
             </div>
           </div>
@@ -126,12 +130,80 @@ function Landing() {
               <h2 className="card-title">Parent</h2>
               <p>Guardian / Caretaker of learner</p>
               <div className="justify-end card-actions">
-                <button className="btn btn-primary">Sign Up</button>
+                <button className="btn text-white bg-[#00367E] hover:bg-[#00367E]/75">Sign Up</button>
               </div>
             </div>
           </div>
         </div>
       </div>
+      {/*features*/}
+      <div className="flex flex-col gap-6 p-6">
+        <h1 className="text-3xl">Our Features</h1>
+        <ul className="flex flex-col gap-6 text-justify list-disc list-inside">
+          <li>
+            Virtual Classrooms: Engage in real-time with educators and peers
+            through seamless video conferencing and collaborative tools,
+            fostering a sense of community from anywhere.
+          </li>
+          <li>
+            Gamified Learning: Turn studying into an adventure with points,
+            badges, and rewards that make learning fun and motivational for
+            students of all ages.
+          </li>
+          <li>
+            Advanced Assessment Tools: Leverage AI-powered automatic grading and
+            detailed insights to track progress, improve understanding, and save
+            time.
+          </li>
+          <li>
+            Time Management and Calendar Tools: Stay organized with our
+            intuitive calendar that integrates classes, assignments, and
+            deadlines in one place.
+          </li>
+          <li>
+            Collaborative Spaces: Work on group projects, share ideas, and
+            discuss topics with ease using our interactive workspaces.
+          </li>
+          <li>
+            Parental Involvement Portal: Empower parents to stay informed and
+            actively support their child’s learning journey.
+          </li>
+          <li>
+            Offline Access: Download lessons and materials for uninterrupted
+            learning, even without an internet connection.
+          </li>
+        </ul>
+      </div>
+      {/*CTA*/}
+
+      <section className="overflow-hidden bg-base-100 sm:grid sm:grid-cols-2 sm:items-center">
+        <div className="p-8 md:p-12 lg:px-16 lg:py-24">
+          <div className="max-w-xl mx-auto text-center">
+            <h2 className="text-2xl font-bold md:text-3xl sm:text-left">
+              Ready to Revolutionize Your Learning Experience?
+            </h2>
+
+            <p className="hidden text-gray-500 md:mt-4 md:block sm:text-left">
+              Join thousands of learners and educators already enhancing their
+              education with EnlightenEd.
+            </p>
+
+            <div className="mt-4 md:mt-8 sm:text-left">
+              <button
+                className="inline-block px-12 py-3 text-sm font-medium text-white transition rounded bg-[#00367E] hover:bg-[#00367E]/75 focus:outline-none focus:ring focus:ring-yellow-400"
+              >
+                Get Started Today
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <img
+          alt=""
+          src={cta_bg}
+          className="h-full w-full object-cover sm:h-[calc(100%_-_2rem)] sm:self-end sm:rounded-ss-[30px] md:h-[calc(100%_-_4rem)] md:rounded-ss-[60px]"
+        />
+      </section>
     </div>
   );
 }
