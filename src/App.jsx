@@ -3,6 +3,7 @@ import { Route, Switch } from "wouter";
 import Navbar from "./components/Nav";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dash";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -19,7 +20,7 @@ export default function App() {
       </Route>
 
         <Route path="/users/:name">
-          {(params) => <>Hello, {params.name}!</>}
+          {(params) => <Dashboard username={params.name}/>}
         </Route>
 
         {/* Default route in a switch */}
