@@ -51,6 +51,7 @@ function Auth({ reqType }) {
               id="password"
               name="password"
               className="grow"
+              placeholder="Password"
             />
           </label>
         </span>
@@ -67,7 +68,7 @@ function Auth({ reqType }) {
               />
               <label
                 htmlFor="student"
-                className="text-sm font-medium text-gray-900 ms-2"
+                className="text-sm font-medium ms-2"
               >
                 Student
               </label>
@@ -81,7 +82,7 @@ function Auth({ reqType }) {
               />
               <label
                 htmlFor="teacher"
-                className="text-sm font-medium text-gray-900 ms-2"
+                className="text-sm font-medium ms-2"
               >
                 Teacher
               </label>
@@ -95,7 +96,7 @@ function Auth({ reqType }) {
               />
               <label
                 htmlFor="parent"
-                className="text-sm font-medium text-gray-900 ms-2"
+                className="text-sm font-medium ms-2"
               >
                 Parent
               </label>
@@ -107,7 +108,7 @@ function Auth({ reqType }) {
                 name="default-radio"
                 className="radio"
               />
-              <label htmlFor="admin" className="text-sm font-medium text-gray-900 ms-2">
+              <label htmlFor="admin" className="text-sm font-medium ms-2">
                 Admin
               </label>
             </div>
