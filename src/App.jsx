@@ -2,6 +2,7 @@ import "./App.css";
 import { Route, Switch } from "wouter";
 import Navbar from "./components/Nav";
 import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -9,7 +10,13 @@ export default function App() {
     <div className="flex flex-col min-h-dvh">
       <Navbar></Navbar>
       <Switch>
-        <Route path="/" component={Landing} />
+      <Route path="/" component={Landing} />
+      <Route path="/sign-in">
+        <Auth reqType={"Sign In"}/>
+      </Route>
+      <Route path="/sign-up">
+        <Auth reqType={"Sign Up"}/>
+      </Route>
 
         <Route path="/users/:name">
           {(params) => <>Hello, {params.name}!</>}
