@@ -1,4 +1,6 @@
+import { useLocation } from "wouter";
 import React, { useState } from "react";
+import Cookies from "js-cookie";
 import {
   Menu,
   X,
@@ -12,9 +14,22 @@ import {
   Bookmark,
 } from "lucide-react";
 
-const Dashboard = ({ username }) => {
+const Dashboard = () => {
   const [activeSpace, setActiveSpace] = useState("Video Conference");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [location, navigate] = useLocation();
+  // auth cookie data & related methods
+  const isAuthenticated = !!Cookies.get("auth");
+  // logout method
+  const handleLogout = () => {
+    Cookies.remove("auth");
+    navigate("/sign-in");
+  };
+  // if auth cookie is absent, go back to login
+  if (!isAuthenticated) {
+    navigate("/sign-in");
+    return null; // Return null to prevent rendering anything else
+  }
 
   const menuItemsForStudents = [
     [<Video />, "Video Conference"],
@@ -38,13 +53,6 @@ const Dashboard = ({ username }) => {
     [<UserCog2 />, "Lecturer Management"],
     [<Bookmark />, "Report Generation"],
     [<User2Icon />, "Account Management"],
-  ];
-
-  const sampleUsers = [
-    { name: "udara", type: "student" },
-    { name: "lahiru", type: "student" },
-    { name: "dileepa", type: "lecturer" },
-    { name: "jagath", type: "admin" },
   ];
 
   const renderContent = () => {
@@ -113,7 +121,7 @@ const Dashboard = ({ username }) => {
                 isSidebarOpen ? "opacity-100" : "opacity-0 lg:opacity-0"
               }`}
             >
-              Welcome {username}!
+              Welcome {JSON.parse(Cookies.get("auth"))["username"]}!
             </h1>
           </div>
           <nav className="mt-4">
@@ -179,18 +187,13 @@ const Dashboard = ({ username }) => {
       </div>
     );
   };
-
-  const authenticate = () => {
-    const user = sampleUsers.find((user) => user.name === username);
-    if (user) {
-      return <SampleDash userType={user.type} />;
-    } else {
-      return <div>Login Failed!</div>;
+  {
+    if (isAuthenticated) {
+      return (
+        <SampleDash userType={JSON.parse(Cookies.get("auth"))["user_type"]} />
+      );
     }
-  };
-
-  // returning this will return either the sampleDash, or the error message - depending on login success
-  return authenticate();
+  }
 };
 
 export default Dashboard;

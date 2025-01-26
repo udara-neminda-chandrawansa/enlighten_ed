@@ -11,16 +11,13 @@ export default function App() {
     <div className="flex flex-col min-h-dvh">
       <Navbar></Navbar>
       <Switch>
-      <Route path="/" component={Landing} />
-      <Route path="/sign-in">
-        <Auth reqType={"Sign In"}/>
-      </Route>
-      <Route path="/sign-up">
-        <Auth reqType={"Sign Up"}/>
-      </Route>
-
-        <Route path="/users/:name">
-          {(params) => <Dashboard username={params.name}/>}
+        <Route path="/" component={Landing} />
+        <Route path="/users" component={Dashboard} />
+        <Route path="/sign-in">
+          <Auth reqType={"Sign In"} />
+        </Route>
+        <Route path="/sign-up">
+          <Auth reqType={"Sign Up"} />
         </Route>
 
         {/* Default route in a switch */}

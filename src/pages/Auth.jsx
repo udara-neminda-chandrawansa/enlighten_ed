@@ -1,4 +1,57 @@
+import { useState } from "react";
+import { useLocation } from "wouter";
+import Cookies from "js-cookie";
+import db_con from "../components/dbconfig";
+
+const login = async (username, email, password) => {
+  try {
+    // Attempt to sign in the user with the email and password
+    const { data, error } = await db_con
+      .from("users")
+      .select("*")
+      .eq("username", username)
+      .eq("email", email)
+      .eq("password", password) // Assuming you store plain text passwords (consider hashing them)
+      .single(); // Use `.single()` to get one user
+
+    if (error) {
+      console.log("Login error:", error.message);
+      return { success: false, message: "Login Failed!" };
+    }
+    return { success: true, user: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, message: "Something went wrong!" };
+  }
+};
+
 function Auth({ reqType }) {
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [location, navigate] = useLocation();
+  const [loginMessage, setLoginMessage] = useState("");
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    const result = await login(username, email, password);
+
+    if (result.success) {
+      // show login msg
+      setLoginMessage(`Welcome, ${result.user.username}`);
+      alert(`Welcome, ${result.user.username}`);
+      // save user data as a cookie
+      const expirationTime = new Date(new Date().getTime() + 60000 * 60 * 24);
+      Cookies.set('auth', JSON.stringify(result.user), { expires: expirationTime });
+      // navigate to dash
+      navigate(`/users`);
+    } else {
+      // Show error message
+      setLoginMessage(result.message);
+      alert(result.message);
+    }
+  };
+
   return (
     <div className="flex flex-grow p-6">
       <div className="flex flex-col flex-grow gap-6 p-6 border rounded-lg">
@@ -12,7 +65,13 @@ function Auth({ reqType }) {
           >
             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
           </svg>
-          <input type="text" className="grow" placeholder="Username" />
+          <input
+            type="text"
+            className="grow"
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+          />
         </label>
         <span className="flex justify-center gap-6 max-sm:flex-col">
           <label className="flex items-center gap-2 sm:w-1/2 input input-bordered">
@@ -31,6 +90,8 @@ function Auth({ reqType }) {
               name="email"
               className="grow"
               placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
             />
           </label>
           <label className="flex items-center gap-2 sm:w-1/2 input input-bordered">
@@ -52,6 +113,8 @@ function Auth({ reqType }) {
               name="password"
               className="grow"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
           </label>
         </span>
@@ -66,10 +129,7 @@ function Auth({ reqType }) {
                 name="default-radio"
                 className="radio"
               />
-              <label
-                htmlFor="student"
-                className="text-sm font-medium ms-2"
-              >
+              <label htmlFor="student" className="text-sm font-medium ms-2">
                 Student
               </label>
             </div>
@@ -80,10 +140,7 @@ function Auth({ reqType }) {
                 name="default-radio"
                 className="radio"
               />
-              <label
-                htmlFor="teacher"
-                className="text-sm font-medium ms-2"
-              >
+              <label htmlFor="teacher" className="text-sm font-medium ms-2">
                 Teacher
               </label>
             </div>
@@ -94,10 +151,7 @@ function Auth({ reqType }) {
                 name="default-radio"
                 className="radio"
               />
-              <label
-                htmlFor="parent"
-                className="text-sm font-medium ms-2"
-              >
+              <label htmlFor="parent" className="text-sm font-medium ms-2">
                 Parent
               </label>
             </div>
@@ -119,6 +173,7 @@ function Auth({ reqType }) {
         <button
           type="submit"
           className="bg-[#00367E] text-white rounded-md p-2"
+          onClick={reqType === "Sign In" ? handleLogin : ""}
         >
           {reqType}
         </button>
