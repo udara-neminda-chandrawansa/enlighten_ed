@@ -10,17 +10,17 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "https://enlighten-ed-omega.vercel.app", // Frontend URL
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   },
 });
 
-//Access to XMLHttpRequest at 'https://enlighten-ed-gzyd.vercel.app/socket.io/?EIO=4&transport=polling&t=ryrfevcn&sid=gbLpsbFAwjdZfM_pAAAA' from origin 'https://enlighten-ed-omega.vercel.app' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+//This is the error: Access to XMLHttpRequest at 'https://enlighten-ed-gzyd.vercel.app/socket.io/?EIO=4&transport=polling&t=ryrfevcn&sid=gbLpsbFAwjdZfM_pAAAA' from origin 'https://enlighten-ed-omega.vercel.app' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 
 // Middleware
 app.use(cors({
   origin: "https://enlighten-ed-omega.vercel.app",
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 }));
 
