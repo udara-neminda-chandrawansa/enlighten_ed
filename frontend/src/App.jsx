@@ -20,7 +20,7 @@ export default function App() {
           <Auth reqType={"Sign Up"} />
         </Route>
 
-        {/* Default route in a switch */}
+        {/* Default route in a switch   */}
         <Route>
           <div className="grid flex-grow px-4 bg-white place-content-center">
             <h1 className="tracking-widest text-gray-500 uppercase">
