@@ -13,6 +13,9 @@ import {
   School,
   Bookmark,
 } from "lucide-react";
+import VideoPlayer from "../components/VideoPlayer";
+import Options from "../components/Options";
+import Notifications from "../components/Notifications";
 
 const Dashboard = () => {
   const [activeSpace, setActiveSpace] = useState("Video Conference");
@@ -61,8 +64,12 @@ const Dashboard = () => {
         return (
           <div className="p-6">
             <h2 className="mb-4 text-2xl font-bold">Video Conference Space</h2>
-            <div className="p-4 rounded-lg bg-base-100">
-              <p>Video conferencing features and controls will go here</p>
+            <div className="flex flex-col gap-6 p-4 rounded-lg bg-base-100">
+              <VideoPlayer />
+              <div className="flex gap-6 max-lg:flex-col lg:pt-6 lg:border-t">
+              <Options />
+              <Notifications />
+              </div>
             </div>
           </div>
         );
@@ -182,7 +189,7 @@ const Dashboard = () => {
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
-          <div className="mt-16 lg:mt-0">{renderContent()}</div>
+          <div className="">{renderContent()}</div>
         </div>
       </div>
     );
