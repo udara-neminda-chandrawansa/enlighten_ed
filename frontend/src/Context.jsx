@@ -4,6 +4,7 @@ import Peer from "simple-peer";
 
 const SocketContext = createContext();
 const socket = io("https://enlighten-ed-gzyd.vercel.app", {
+  path: "/socket.io", // Explicitly set the socket.io path
   withCredentials: true,
 });
 const ContextProvider = ({ children }) => {
