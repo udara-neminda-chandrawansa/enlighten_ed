@@ -1,29 +1,57 @@
-const app = require("express")();
-const server = require("http").createServer(app);
+const express = require("express");
+const http = require("http");
 const cors = require("cors");
-const io = require("socket.io")(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+const { Server } = require("socket.io");
+
+const app = express();
+const server = http.createServer(app);
+
+// CORS configuration: Replace with your actual frontend URL
+const io = new Server(server, {
+  cors: {
+    origin: "https://enlighten-ed-omega.vercel.app", // Frontend URL
+    methods: ["GET", "POST"],
+  },
 });
 
+// Middleware
 app.use(cors());
+
+// Port configuration
 const PORT = process.env.PORT || 8080;
-app.get('/', (req, res) => {
-        res.send('Hello World');
+
+// Basic route
+app.get("/", (req, res) => {
+  res.send("Backend is up and running!");
 });
 
+// Socket.IO connection handling
 io.on("connection", (socket) => {
-    socket.emit("me", socket.id);
-    socket.on("disconnect", () => {
-        socket.broadcast.emit("callEnded")
-    });
-    socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-        io.to(userToCall).emit("callUser", { signal: signalData, from, name });
-    });
-    socket.on("answerCall", (data) => {
-        io.to(data.to).emit("callAccepted", data.signal)
-    });
+  console.log(`New client connected: ${socket.id}`);
+
+  // Emit current socket ID to the client
+  socket.emit("me", socket.id);
+
+  // Handle disconnection
+  socket.on("disconnect", () => {
+    console.log(`Client disconnected: ${socket.id}`);
+    socket.broadcast.emit("callEnded");
+  });
+
+  // Handle call initiation
+  socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+    console.log(`Calling user: ${userToCall}`);
+    io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+  });
+
+  // Handle call answer
+  socket.on("answerCall", (data) => {
+    console.log(`Call answered by: ${data.to}`);
+    io.to(data.to).emit("callAccepted", data.signal);
+  });
 });
-server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+// Start server
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
