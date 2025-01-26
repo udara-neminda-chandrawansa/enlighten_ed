@@ -6,16 +6,21 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 
-// CORS configuration: Replace with your actual frontend URL
+// Adjust CORS configuration for Vercel
 const io = new Server(server, {
   cors: {
     origin: "https://enlighten-ed-omega.vercel.app", // Frontend URL
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://enlighten-ed-omega.vercel.app",
+  methods: ["GET", "POST"],
+  credentials: true,
+}));
 
 // Port configuration
 const PORT = process.env.PORT || 8080;
