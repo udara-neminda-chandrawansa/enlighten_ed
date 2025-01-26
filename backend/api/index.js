@@ -17,12 +17,24 @@ const io = new Server(server, {
 
 //This is the error: Access to XMLHttpRequest at 'https://enlighten-ed-gzyd.vercel.app/socket.io/?EIO=4&transport=polling&t=ryrfevcn&sid=gbLpsbFAwjdZfM_pAAAA' from origin 'https://enlighten-ed-omega.vercel.app' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 
+// preflight middleware
+app.options(
+  "*",
+  cors({
+    origin: "https://enlighten-ed-omega.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
+
 // Middleware
-app.use(cors({
-  origin: "https://enlighten-ed-omega.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "https://enlighten-ed-omega.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
 
 // Port configuration
 const PORT = process.env.PORT || 8080;
