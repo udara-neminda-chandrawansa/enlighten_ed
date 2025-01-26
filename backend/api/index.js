@@ -9,7 +9,7 @@ const server = http.createServer(app);
 // Adjust CORS configuration for Vercel
 const io = new Server(server, {
   cors: {
-    origin: "https://enlighten-ed-omega.vercel.app", // Frontend URL
+    origin: "https://enlighten-ed-omega.vercel.app", // Frontend URL   
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow more methods
     credentials: true,
   },
