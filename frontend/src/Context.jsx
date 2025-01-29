@@ -4,13 +4,13 @@ import Peer from "simple-peer";
 
 const SocketContext = createContext();
 const socket = io("https://enlighten-ed-gzyd.vercel.app", {
-  path: "/socketio",
-  addTrailingSlash: false,
-  transports: ["websocket"],
+  //path: "/socket.io", // Explicitly set the socket.io path
+  path: '/socket',
+  transports: ['websocket'],
   withCredentials: true,
+  reconnection: true,
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
-  autoConnect: true
 });
 const ContextProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
@@ -24,24 +24,6 @@ const ContextProvider = ({ children }) => {
   const connectionRef = useRef();
 
   useEffect(() => {
-    // error handling
-    socket.on("connect", () => {
-      console.log("Connected to server", socket.id);
-    });
-  
-    socket.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-      // Implement reconnection logic if needed
-    });
-  
-    socket.on("disconnect", (reason) => {
-      console.log("Disconnected:", reason);
-      if (reason === "io server disconnect") {
-        // the disconnection was initiated by the server, reconnect manually
-        socket.connect();
-      }
-    })
-    // vid conf logic
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
@@ -53,11 +35,9 @@ const ContextProvider = ({ children }) => {
     socket.on("callUser", ({ from, name: callerName, signal }) => {
       setCall({ isReceivingCall: true, from, name: callerName, signal });
     });
-    return () => {
-      socket.off("connect");
-      socket.off("connect_error");
-      socket.off("disconnect");
-    };
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
   }, []);
 
   const answerCall = () => {

@@ -4,13 +4,9 @@
     { "src": "**/*.js", "use": "@vercel/node" }
   ],
   "routes": [
-    {
-      "src": "/socketio",
-      "dest": "/socketio.js"
-    },
-    {
-      "src": "/socket.io/(.*)",
-      "dest": "/socketio.js"
+    { 
+      "src": "/socket",
+      "dest": "/socket.js"
     }
   ]
 }
