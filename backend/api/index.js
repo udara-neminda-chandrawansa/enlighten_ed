@@ -35,7 +35,7 @@ const PORT = process.env.PORT || 8080;
 
 // Basic route
 app.get("/", (req, res) => {
-  res.send("Backend is up and running!");
+  res.send("Backend is up and running on port: " + PORT);
 });
 
 // Socket.IO connection handling
