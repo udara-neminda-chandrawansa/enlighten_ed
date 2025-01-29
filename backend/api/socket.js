@@ -8,7 +8,7 @@ const SocketHandler = (req, res) => {
   }
 
   const io = new Server(res.socket.server, {
-    path: '/api/socket',
+    path: '/socket',
     addTrailingSlash: false,
     cors: {
       origin: "*",
