@@ -30,6 +30,9 @@ const ContextProvider = ({ children }) => {
     socket.on("callUser", ({ from, name: callerName, signal }) => {
       setCall({ isReceivingCall: true, from, name: callerName, signal });
     });
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
   }, []);
 
   const answerCall = () => {
