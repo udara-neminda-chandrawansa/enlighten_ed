@@ -3,10 +3,14 @@ import { io } from "socket.io-client";
 import Peer from "simple-peer";
 
 const SocketContext = createContext();
-const socket = io("https://enlighten-ed-gzyd.vercel.app:8080", {
+const socket = io("https://enlighten-ed-gzyd.vercel.app", {
   //path: "/socket.io", // Explicitly set the socket.io path
+  path: '/api/socket',
   transports: ['websocket'],
   withCredentials: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
 });
 const ContextProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
