@@ -5,7 +5,7 @@ import Peer from "simple-peer";
 const SocketContext = createContext();
 // local: http://localhost:8080
 // global: https://enlighten-ed-gzyd.vercel.app/
-const socket = io("http://localhost:8080", {
+const socket = io("https://enlighten-ed-gzyd.vercel.app", {
   //path: "/socket.io", // Explicitly set the socket.io path
   // path: '/',
   transports: ['websocket'],
