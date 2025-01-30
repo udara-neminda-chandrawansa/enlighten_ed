@@ -15,7 +15,7 @@ const io = new Server(server, {
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow more methods
     credentials: true,
   },
-  // path: "/socket.io", // Explicitly set the socket.io path
+  path: "/", // Explicitly set the socket.io path
 });
 
 // Middleware
