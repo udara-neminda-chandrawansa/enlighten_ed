@@ -6,7 +6,7 @@ const SocketContext = createContext();
 // local: http://localhost:8080
 // global: https://enlighten-ed-gzyd.vercel.app/
 const socket = io("https://enlighten-ed-gzyd.vercel.app:8080", {
-  //path: "/socket.io", // Explicitly set the socket.io path
+  path: "/socket.io", // Explicitly set the socket.io path
   // path: '/',
   transports: ['websocket'],
   withCredentials: true,
