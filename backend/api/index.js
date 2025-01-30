@@ -7,6 +7,8 @@ const app = express();
 const server = http.createServer(app);
 
 // Adjust CORS configuration for Vercel
+// local: http://localhost:5173
+// global: https://enlighten-ed-omega.vercel.app
 const io = new Server(server, {
   cors: {
     origin: "https://enlighten-ed-omega.vercel.app", // Frontend URL   
