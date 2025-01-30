@@ -9,7 +9,7 @@
       "dest": "/socket.js"
     },
     { 
-      "src": "/",
+      "src": "/(.*)",
       "dest": "/index.js"
     }
   ]
