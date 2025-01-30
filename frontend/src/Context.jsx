@@ -7,7 +7,7 @@ const SocketContext = createContext();
 // global: https://enlighten-ed-gzyd.vercel.app/
 const socket = io("https://enlighten-ed-gzyd.vercel.app/", {
   //path: "/socket.io", // Explicitly set the socket.io path
-  //path: '/socket',
+  path: '/',
   transports: ['websocket'],
   withCredentials: true,
   reconnection: true,
