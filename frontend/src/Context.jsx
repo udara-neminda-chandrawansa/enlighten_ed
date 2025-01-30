@@ -4,7 +4,7 @@ import Peer from "simple-peer";
 
 const SocketContext = createContext();
 // local: http://localhost:8080
-// global: https://enlighten-ed-gzyd.vercel.app/
+// global: https://enlighten-ed.onrender.com
 const socket = io("https://enlighten-ed.onrender.com", {
   path: "/socket.io", // Explicitly set the socket.io path
   // path: '/',
