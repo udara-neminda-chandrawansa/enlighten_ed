@@ -25,10 +25,43 @@ const login = async (username, email, password) => {
   }
 };
 
+const signup = async (username, email, password, user_type) => {
+  try {
+    // Check if the email already exists
+    const { data: existingUser } = await db_con
+      .from("users")
+      .select("email")
+      .eq("email", email)
+      .single();
+
+    if (existingUser) {
+      return { success: false, message: "Email already in use!" };
+    }
+
+    // Insert new user
+    const { data, error } = await db_con
+      .from("users")
+      .insert([{ username, email, password, user_type }]) // Consider hashing passwords
+      .select()
+      .single();
+
+    if (error) {
+      console.log("Signup error:", error.message);
+      return { success: false, message: "Signup Failed!" };
+    }
+
+    return { success: true, user: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, message: "Something went wrong!" };
+  }
+};
+
 function Auth({ reqType }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [accountType, setAccountType] = useState("student");
   const [location, navigate] = useLocation();
   const [loginMessage, setLoginMessage] = useState("");
 
@@ -42,12 +75,29 @@ function Auth({ reqType }) {
       alert(`Welcome, ${result.user.username}`);
       // save user data as a cookie
       const expirationTime = new Date(new Date().getTime() + 60000 * 60 * 24);
-      Cookies.set('auth', JSON.stringify(result.user), { expires: expirationTime });
+      Cookies.set("auth", JSON.stringify(result.user), {
+        expires: expirationTime,
+      });
       // navigate to dash
       navigate(`/users`);
     } else {
       // Show error message
       setLoginMessage(result.message);
+      alert(result.message);
+    }
+  };
+
+  const handleSignup = async (event) => {
+    event.preventDefault();
+    const result = await signup(username, email, password, accountType);
+
+    if (result.success) {
+      alert(`Signup successful! Welcome, ${result.user.username}`);
+      Cookies.set("auth", JSON.stringify(result.user), {
+        expires: 1, // 1 day expiration
+      });
+      navigate(`/users`);
+    } else {
       alert(result.message);
     }
   };
@@ -121,51 +171,21 @@ function Auth({ reqType }) {
         {reqType === "Sign Up" ? (
           <div className="flex gap-6 max-sm:flex-col">
             <p>Account Type:</p>
-            <div className="flex items-center">
-              <input
-                defaultChecked
-                id="student"
-                type="radio"
-                name="default-radio"
-                className="radio"
-              />
-              <label htmlFor="student" className="text-sm font-medium ms-2">
-                Student
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                id="teacher"
-                type="radio"
-                name="default-radio"
-                className="radio"
-              />
-              <label htmlFor="teacher" className="text-sm font-medium ms-2">
-                Teacher
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                id="parent"
-                type="radio"
-                name="default-radio"
-                className="radio"
-              />
-              <label htmlFor="parent" className="text-sm font-medium ms-2">
-                Parent
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                id="admin"
-                type="radio"
-                name="default-radio"
-                className="radio"
-              />
-              <label htmlFor="admin" className="text-sm font-medium ms-2">
-                Admin
-              </label>
-            </div>
+            {["student", "lecturer", "parent", "admin"].map((type) => (
+              <div key={type} className="flex items-center">
+                <input
+                  id={type}
+                  type="radio"
+                  name="accountType"
+                  className="radio"
+                  checked={accountType === type}
+                  onChange={() => setAccountType(type)}
+                />
+                <label htmlFor={type} className="text-sm font-medium ms-2">
+                  {type}
+                </label>
+              </div>
+            ))}
           </div>
         ) : (
           ""
@@ -173,7 +193,7 @@ function Auth({ reqType }) {
         <button
           type="submit"
           className="bg-[#00367E] text-white rounded-md p-2"
-          onClick={reqType === "Sign In" ? handleLogin : ""}
+          onClick={reqType === "Sign In" ? handleLogin : handleSignup}
         >
           {reqType}
         </button>

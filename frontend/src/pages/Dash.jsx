@@ -18,7 +18,7 @@ import Options from "../components/Options";
 import Notifications from "../components/Notifications";
 
 const Dashboard = () => {
-  const [activeSpace, setActiveSpace] = useState("Video Conference");
+  const [activeSpace, setActiveSpace] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [location, navigate] = useLocation();
   // auth cookie data & related methods
@@ -110,7 +110,14 @@ const Dashboard = () => {
           </div>
         );
       default:
-        return null;
+        return (
+          <div className="p-6">
+            <h2 className="mb-4 text-2xl font-bold">Welcome to EnlightenEd Dashboard 👋</h2>
+            <div className="p-4 rounded-lg bg-base-100">
+              <p>Select something from the menu</p>
+            </div>
+          </div>
+        );
     }
   };
   // this is the dash that is ultimatelt returned. modify this according to the user type encountered in each login instance
