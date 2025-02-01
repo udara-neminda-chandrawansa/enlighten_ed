@@ -22,11 +22,13 @@ const Options = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <CopyToClipboard text={me}>
-            <button className="p-1 text-sm rounded-md bg-base-300">
-              Copy ID
-            </button>
-          </CopyToClipboard>
+          {me && (
+            <CopyToClipboard text={me}>
+              <button className="p-1 text-sm rounded-md bg-base-300">
+                Copy ID
+              </button>
+            </CopyToClipboard>
+          )}
         </div>
         {/*user data*/}
         <div className="flex flex-col gap-3 p-3 rounded-lg bg-base-200">

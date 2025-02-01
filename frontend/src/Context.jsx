@@ -8,7 +8,7 @@ const SocketContext = createContext();
 const socket = io("https://enlighten-ed.onrender.com", {
   path: "/socket.io", // Explicitly set the socket.io path
   // path: '/',
-  transports: ['websocket'],
+  transports: ["websocket"],
   withCredentials: true,
   reconnection: true,
   reconnectionAttempts: 5,
@@ -30,16 +30,36 @@ const ContextProvider = ({ children }) => {
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
-      });
+        if (myVideo.current) {
+          myVideo.current.srcObject = currentStream;
+        }
+      })
+      .catch((err) => console.error("Media access error:", err));
 
-    socket.on("me", (id) => setMe(id));
+    socket.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.on("me", (id) => {
+      console.log("Received socket ID:", id);
+      setMe(id);
+    });
+
     socket.on("callUser", ({ from, name: callerName, signal }) => {
+      console.log("Incoming call from:", callerName, "ID:", from); // Debugging
       setCall({ isReceivingCall: true, from, name: callerName, signal });
     });
+
     socket.on("connect_error", (err) => {
-      console.log(`connect_error due to ${err.message}`);
+      console.error("Socket connection error:", err.message);
     });
+
+    return () => {
+      socket.off("me");
+      socket.off("connect");
+      socket.off("callUser");
+      socket.off("connect_error");
+    };
   }, []);
 
   const answerCall = () => {
@@ -58,6 +78,7 @@ const ContextProvider = ({ children }) => {
   const callUser = (id) => {
     const peer = new Peer({ initiator: true, trickle: false, stream });
     peer.on("signal", (data) => {
+      console.log("Calling user:", id); // Debugging
       socket.emit("callUser", {
         userToCall: id,
         signalData: data,
