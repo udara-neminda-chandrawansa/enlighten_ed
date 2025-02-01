@@ -103,8 +103,8 @@ function Auth({ reqType }) {
   };
 
   return (
-    <div className="flex flex-grow p-6">
-      <div className="flex flex-col flex-grow gap-6 p-6 border rounded-lg">
+    <div className="flex items-center justify-center flex-grow p-6 bg-base-200">
+      <div className="flex flex-col flex-grow max-w-xl gap-6 p-6 border rounded-lg h-fit bg-base-100">
         <h1 className="text-3xl text-center">{reqType}</h1>
         <label className="flex items-center gap-2 input input-bordered">
           <svg
@@ -169,7 +169,7 @@ function Auth({ reqType }) {
           </label>
         </span>
         {reqType === "Sign Up" ? (
-          <div className="flex gap-6 max-sm:flex-col">
+          <div className="flex justify-center gap-6 max-sm:flex-col">
             <p>Account Type:</p>
             {["student", "lecturer", "parent", "admin"].map((type) => (
               <div key={type} className="flex items-center">
