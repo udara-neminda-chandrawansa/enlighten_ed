@@ -17,28 +17,12 @@ import VideoPlayer from "../components/VideoPlayer";
 import Options from "../components/Options";
 import Notifications from "../components/Notifications";
 import UpdateAccount from "../components/UpdateAccount";
-import db_con from "../components/dbconfig";
 import { SocketContext } from "../Context";
-
-const updatePeerId = async (peerId) => {
-  const userId = JSON.parse(Cookies.get("auth"))["user_id"]; // Get logged-in user ID
-  const { error } = await db_con
-    .from("users")
-    .update({ peer_id: peerId })
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Error updating peer ID:", error.message);
-  } else {
-    console.log("Peer ID updated successfully!");
-  }
-};
 
 function Dashboard() {
   const [activeSpace, setActiveSpace] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [location, navigate] = useLocation();
-  const {me} = useContext(SocketContext);
 
   // auth cookie data & related methods
   const isAuthenticated = !!Cookies.get("auth");
@@ -53,11 +37,6 @@ function Dashboard() {
     navigate("/sign-in");
     return null; // Return null to prevent rendering anything else
   }
-
-  // update user's "peer_id" on dash load
-  useEffect(() => {
-    updatePeerId(me);
-  }, []);
 
   const menuItemsForStudents = [
     [<Video />, "Video Conference"],

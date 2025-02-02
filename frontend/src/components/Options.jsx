@@ -9,7 +9,8 @@ const getUsers = async () => {
       .from("users")
       .select("username, peer_id") // Fetch Peer ID instead of user_id
       .neq("user_id", JSON.parse(Cookies.get("auth"))["user_id"]) // Exclude self
-      .neq("peer_id", null).neq("peer_id", ""); // Exclude null peer_id rows
+      .neq("peer_id", null)
+      .neq("peer_id", ""); // Exclude null peer_id rows
 
     if (error) {
       console.log("Users Loading error:", error.message);
@@ -22,22 +23,39 @@ const getUsers = async () => {
   }
 };
 
+const updatePeerId = async (peerId) => {
+  const userId = JSON.parse(Cookies.get("auth"))["user_id"]; // Get logged-in user ID
+  const { error } = await db_con
+    .from("users")
+    .update({ peer_id: peerId })
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error updating peer ID:", error.message);
+  } else {
+    console.log("Peer ID updated successfully!");
+  }
+};
+
 const Options = () => {
   const { callAccepted, setName, callEnded, leaveCall, callUser } =
     useContext(SocketContext);
   const [users, setUsers] = useState([]);
+  const { me } = useContext(SocketContext);
 
   useEffect(() => {
     const fetchUsers = async () => {
       const result = await getUsers();
       if (result.success) {
         setUsers(result.users);
+        console.log("Users Loaded!");
       } else {
         console.log("Message:", result.message);
       }
     };
     fetchUsers();
     setName(JSON.parse(Cookies.get("auth"))["username"]);
+    updatePeerId(me);
   }, []);
 
   return (
@@ -51,7 +69,7 @@ const Options = () => {
               users.map((user) => (
                 <div
                   key={user.user_id}
-                  className="flex items-center justify-between p-2 rounded-md bg-base-200"
+                  className="flex items-center justify-between gap-2 p-2 rounded-md bg-base-200"
                 >
                   <span>{user.username}</span>
                   <button
