@@ -74,25 +74,34 @@ const ContextProvider = ({ children }) => {
     peer.signal(call.signal);
     connectionRef.current = peer;
   };
+  
+  const callUser = (peerId) => {
+    if (!peerId) {
+      console.error("Invalid Peer ID");
+      return;
+    }
 
-  const callUser = (id) => {
     const peer = new Peer({ initiator: true, trickle: false, stream });
+
     peer.on("signal", (data) => {
-      console.log("Calling user:", id); // Debugging
+      console.log("Calling Peer ID:", peerId);
       socket.emit("callUser", {
-        userToCall: id,
+        userToCall: peerId, // Use peer ID from database
         signalData: data,
-        from: me,
+        from: me, // My Peer ID
         name,
       });
     });
+
     peer.on("stream", (currentStream) => {
       userVideo.current.srcObject = currentStream;
     });
+
     socket.on("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
     });
+
     connectionRef.current = peer;
   };
 
