@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import {
   Menu,
@@ -17,7 +17,30 @@ import VideoPlayer from "../components/VideoPlayer";
 import Options from "../components/Options";
 import Notifications from "../components/Notifications";
 import UpdateAccount from "../components/UpdateAccount";
-import { SocketContext } from "../Context";
+import db_con from "../components/dbconfig";
+
+// this is to reset peer_id before user closes the browser/tab
+const resetPeerID = async () => {
+  try {
+    // Update the user data
+    const { data, error } = await db_con
+      .from("users")
+      .update({ peer_id: null }) // Set peer_id to null
+      .eq("user_id", JSON.parse(Cookies.get("auth"))["user_id"]) // Identify the user by ID
+      .select()
+      .single();
+
+    if (error) {
+      console.log("Update error:", error.message);
+      return { success: false, message: "Update Failed!" };
+    }
+
+    return { success: true, user: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, message: "Something went wrong!" };
+  }
+};
 
 function Dashboard() {
   const [activeSpace, setActiveSpace] = useState("");
@@ -37,6 +60,21 @@ function Dashboard() {
     navigate("/sign-in");
     return null; // Return null to prevent rendering anything else
   }
+
+  // this is to reset peer_id before user closes the browser/tab
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      resetPeerID();
+      event.preventDefault();
+      event.returnValue = ""; // Some browsers require this for the confirmation dialog
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const menuItemsForStudents = [
     [<Video />, "Video Conference"],
@@ -149,6 +187,7 @@ function Dashboard() {
         );
     }
   };
+
   // this is the dash that is ultimatelt returned. modify this according to the user type encountered in each login instance
   const SampleDash = ({ userType }) => {
     return (

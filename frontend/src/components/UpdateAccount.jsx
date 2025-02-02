@@ -12,7 +12,7 @@ function UpdateAccount() {
       // Update the user data
       const { data, error } = await db_con
         .from("users")
-        .update({ username, email, password }) // You might want to hash the password
+        .update({ username, email, password })
         .eq("user_id", userId) // Identify the user by ID
         .select()
         .single();
