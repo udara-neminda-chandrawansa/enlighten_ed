@@ -117,7 +117,7 @@ function Dashboard() {
                 <Options />
                 <Notifications />
               </div>
-              <ChatApp />
+              <ChatApp receiver={"public"} />
             </div>
           </div>
         );

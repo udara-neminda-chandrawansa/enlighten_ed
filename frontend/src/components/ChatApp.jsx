@@ -21,7 +21,7 @@ function ChatApp({receiver}) {
 
   useEffect(() => {
     socket.on("send message", (data) => {
-      if(data.sender === username || data.receiver === username){
+      if(data.sender === username || data.receiver === username || receiver === "public"){
         setMessages((prevMessages) => [...prevMessages, data]);
       }
     });
