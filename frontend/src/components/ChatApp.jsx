@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import Cookies from "js-cookie";
+import { Send } from "lucide-react";
 
 const socket = io("https://enlighten-ed.onrender.com", {
   path: "/socket.io", // Explicitly set the socket.io path
@@ -44,7 +45,7 @@ function ChatApp() {
   };
   return (
     <div className="flex flex-col">
-      <div className="flex-grow">
+      <div className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -63,20 +64,20 @@ function ChatApp() {
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <form onSubmit={handleSubmit} className="flex items-center gap-3 pt-3">
         <input
           type="text"
           placeholder="Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="p-2 border border-gray-400 rounded-md"
+          className="w-full p-2 border border-gray-400 rounded-md"
           required
         />
         <button
           type="submit"
           className="p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
         >
-          Send
+          <Send/>
         </button>
       </form>
     </div>
