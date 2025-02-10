@@ -111,10 +111,11 @@ function Dashboard() {
             <h2 className="mb-4 text-2xl font-bold">Video Conference Space</h2>
             <div className="flex flex-col gap-6 p-4 rounded-lg bg-base-100">
               <VideoPlayer />
-              <div className="flex gap-6 max-lg:flex-col lg:pt-6 lg:border-t">
+              <div className="flex gap-6 max-lg:flex-col lg:py-6 lg:border-y">
                 <Options />
                 <Notifications />
               </div>
+              <ChatApp/>
             </div>
           </div>
         );

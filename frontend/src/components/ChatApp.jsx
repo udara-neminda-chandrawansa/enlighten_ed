@@ -29,9 +29,10 @@ function ChatApp() {
     };
   }, []);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  useEffect(() => {
+    const messageContainer = document.getElementById('message-container');
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+  }, [messages]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -45,14 +46,12 @@ function ChatApp() {
       };
 
       socket.emit("send message", messageData);
-      scrollToBottom();
       setMessage("");
-      
     }
   };
   return (
     <div className="flex flex-col">
-      <div className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll">
+      <div id="message-container" className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll scroll-smooth">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -78,7 +77,7 @@ function ChatApp() {
           placeholder="Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="w-full p-2 border border-gray-400 rounded-md"
+          className="w-full input input-bordered"
           required
         />
         <button
