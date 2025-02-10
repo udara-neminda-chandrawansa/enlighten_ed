@@ -50,7 +50,7 @@ function Dashboard() {
   const [activeSpace, setActiveSpace] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [location, navigate] = useLocation();
-  const [reciever, setReciever] = useState(""); // for messaging
+  const [reciever, setReciever] = useState("public"); // for messaging
 
   // auth cookie data & related methods
   const isAuthenticated = !!Cookies.get("auth");
