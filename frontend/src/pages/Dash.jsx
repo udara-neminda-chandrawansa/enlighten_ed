@@ -57,6 +57,7 @@ function Dashboard() {
 
   // logout method
   const handleLogout = () => {
+    resetPeerID();
     Cookies.remove("auth");
     navigate("/sign-in");
   };
