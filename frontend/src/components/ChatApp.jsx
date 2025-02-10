@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import Cookies from "js-cookie";
 import { Send } from "lucide-react";
@@ -17,6 +17,7 @@ function ChatApp() {
   const username = JSON.parse(Cookies.get("auth"))["username"];
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     socket.on("send message", (data) => {
@@ -27,6 +28,10 @@ function ChatApp() {
       socket.off("send message");
     };
   }, []);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,7 +45,9 @@ function ChatApp() {
       };
 
       socket.emit("send message", messageData);
+      scrollToBottom();
       setMessage("");
+      
     }
   };
   return (
@@ -63,6 +70,7 @@ function ChatApp() {
             <div className="opacity-50 chat-footer">Sent</div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="flex items-center gap-3 pt-3">
         <input
