@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
+import Cookies from "js-cookie";
 
 const socket = io("https://enlighten-ed.onrender.com", {
   path: "/socket.io", // Explicitly set the socket.io path
@@ -12,27 +13,16 @@ const socket = io("https://enlighten-ed.onrender.com", {
 });
 
 function ChatApp() {
-  const [username, setUsername] = useState("");
+  const username = JSON.parse(Cookies.get("auth"))["username"];
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    socket.on("send name", (username) => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { type: "name", content: username },
-      ]);
-    });
-
-    socket.on("send message", (chat) => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { type: "message", content: chat },
-      ]);
+    socket.on("send message", (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
     });
 
     return () => {
-      socket.off("send name");
       socket.off("send message");
     };
   }, []);
@@ -41,28 +31,39 @@ function ChatApp() {
     e.preventDefault();
 
     if (message && username) {
-      socket.emit("send name", username);
-      socket.emit("send message", message);
+      const messageData = {
+        sender: username,
+        content: message,
+        type: "message",
+        timestamp: new Date().toISOString(),
+      };
+
+      socket.emit("send message", messageData);
       setMessage("");
     }
   };
-
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h1 className="mb-5 text-3xl font-bold text-center text-green-500">
-        GeeksforGeeks
-      </h1>
-      <h2 className="mb-5 text-xl text-center">Chat App using Socket.io</h2>
-
+    <div className="flex flex-col">
+      <div className="flex-grow">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`chat ${
+              msg.sender === username ? "chat-end" : "chat-start"
+            }`}
+          >
+            <div className="chat-header">
+              {msg.sender}
+              <time className="ml-2 text-xs opacity-50">
+                {new Date(msg.timestamp).toLocaleTimeString()}
+              </time>
+            </div>
+            <div className="chat-bubble">{msg.content}</div>
+            <div className="opacity-50 chat-footer">Sent</div>
+          </div>
+        ))}
+      </div>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-        <input
-          type="text"
-          placeholder="Name"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="p-2 border border-gray-400 rounded-md"
-          required
-        />
         <input
           type="text"
           placeholder="Message"
@@ -78,21 +79,6 @@ function ChatApp() {
           Send
         </button>
       </form>
-
-      <div className="pt-4 mt-5 border-t">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`${
-              msg.type === "name"
-                ? "bg-gray-200 text-center text-black"
-                : "text-left"
-            } p-2 mb-2 rounded`}
-          >
-            {msg.type === "name" ? `${msg.content}:` : msg.content}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

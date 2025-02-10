@@ -34,12 +34,8 @@ io.on("connection", (socket) => {
   });
 
   // real-time messaging
-  socket.on('send name', (username) => {
-    io.emit('send name', username);
-  });
-
-  socket.on('send message', (chat) => {
-    io.emit('send message', chat);
+  socket.on("send message", (messageData) => {
+    io.emit("send message", messageData);
   });
 });
 
