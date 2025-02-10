@@ -34,7 +34,7 @@ const LoadUsers = () => {
       }
     };
     fetchUsers();
-  });
+  }, []);
 
   return users;
 };
