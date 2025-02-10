@@ -117,7 +117,7 @@ function Dashboard() {
                 <Options />
                 <Notifications />
               </div>
-              <ChatApp receiver={reciever} />
+              <ChatApp />
             </div>
           </div>
         );
@@ -158,7 +158,7 @@ function Dashboard() {
                     </div>
                   ))}
                 </div>
-                <ChatApp />
+                <ChatApp receiver={reciever} />
               </div>
             </div>
           </div>
