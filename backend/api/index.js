@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
   console.log(`New client connected: ${socket.id}`);
   socket.emit("me", socket.id);
 
+  // video conferencing
   socket.on("disconnect", () => {
     console.log(`Client disconnected: ${socket.id}`);
     socket.broadcast.emit("callEnded");
@@ -30,6 +31,15 @@ io.on("connection", (socket) => {
 
   socket.on("answerCall", (data) => {
     io.to(data.to).emit("callAccepted", data.signal);
+  });
+
+  // real-time messaging
+  socket.on('send name', (username) => {
+    io.emit('send name', username);
+  });
+
+  socket.on('send message', (chat) => {
+    io.emit('send message', chat);
   });
 });
 

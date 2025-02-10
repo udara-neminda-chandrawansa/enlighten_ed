@@ -19,6 +19,7 @@ import Options from "../components/Options";
 import Notifications from "../components/Notifications";
 import UpdateAccount from "../components/UpdateAccount";
 import VirtualClassMgmt from "../components/VirtualClassMgmt";
+import ChatApp from "../components/ChatApp";
 import db_con from "../components/dbconfig";
 
 // this is to reset peer_id before user closes the browser/tab
@@ -140,7 +141,7 @@ function Dashboard() {
           <div className="p-6">
             <h2 className="mb-4 text-2xl font-bold">Commune Space</h2>
             <div className="p-4 rounded-lg bg-base-100">
-              <p>Community interaction features will go here</p>
+              <ChatApp/>
             </div>
           </div>
         );
