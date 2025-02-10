@@ -21,6 +21,7 @@ import UpdateAccount from "../components/UpdateAccount";
 import VirtualClassMgmt from "../components/VirtualClassMgmt";
 import ChatApp from "../components/ChatApp";
 import db_con from "../components/dbconfig";
+import LoadUsers from "../components/LoadUsers";
 
 // this is to reset peer_id before user closes the browser/tab
 const resetPeerID = async () => {
@@ -49,6 +50,7 @@ function Dashboard() {
   const [activeSpace, setActiveSpace] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [location, navigate] = useLocation();
+  const [reciever, setReciever] = useState(""); // for messaging
 
   // auth cookie data & related methods
   const isAuthenticated = !!Cookies.get("auth");
@@ -115,7 +117,7 @@ function Dashboard() {
                 <Options />
                 <Notifications />
               </div>
-              <ChatApp/>
+              <ChatApp receiver={reciever} />
             </div>
           </div>
         );
@@ -131,9 +133,11 @@ function Dashboard() {
       case "Virtual Classrooms":
         return (
           <div className="p-6">
-            <h2 className="mb-4 text-2xl font-bold">Virtual Classrooms Space</h2>
+            <h2 className="mb-4 text-2xl font-bold">
+              Virtual Classrooms Space
+            </h2>
             <div className="p-4 rounded-lg bg-base-100">
-              <VirtualClassMgmt/>
+              <VirtualClassMgmt />
             </div>
           </div>
         );
@@ -142,7 +146,20 @@ function Dashboard() {
           <div className="p-6">
             <h2 className="mb-4 text-2xl font-bold">Commune Space</h2>
             <div className="p-4 rounded-lg bg-base-100">
-              <ChatApp/>
+              <div className="flex max-md:flex-col">
+                <div className="flex flex-col gap-2 md:border-r md:pr-2 md:mr-2 md:w-1/2">
+                  {LoadUsers().map((user, index) => (
+                    <div
+                      key={index}
+                      className={`px-2 py-3 cursor-pointer rounded-md bg-base-200 ${reciever === user["username"] ? "border shadow-md" : ""}`}
+                      onClick={() => setReciever(user["username"])}
+                    >
+                      {user["username"]}
+                    </div>
+                  ))}
+                </div>
+                <ChatApp />
+              </div>
             </div>
           </div>
         );
@@ -165,7 +182,7 @@ function Dashboard() {
                 className="flex items-center gap-3 p-2 text-white bg-red-500 rounded-md"
                 onClick={() => handleLogout()}
               >
-                <LogOut/>
+                <LogOut />
                 Logout
               </button>
             </div>

@@ -13,7 +13,7 @@ const socket = io("https://enlighten-ed.onrender.com", {
   reconnectionDelay: 1000,
 });
 
-function ChatApp() {
+function ChatApp({receiver}) {
   const username = JSON.parse(Cookies.get("auth"))["username"];
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -21,7 +21,9 @@ function ChatApp() {
 
   useEffect(() => {
     socket.on("send message", (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+      if(data.sender === username || data.receiver === username){
+        setMessages((prevMessages) => [...prevMessages, data]);
+      }
     });
 
     return () => {
@@ -40,6 +42,7 @@ function ChatApp() {
     if (message && username) {
       const messageData = {
         sender: username,
+        receiver: receiver,
         content: message,
         type: "message",
         timestamp: new Date().toISOString(),
@@ -50,7 +53,7 @@ function ChatApp() {
     }
   };
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <div id="message-container" className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll scroll-smooth">
         {messages.map((msg, index) => (
           <div
