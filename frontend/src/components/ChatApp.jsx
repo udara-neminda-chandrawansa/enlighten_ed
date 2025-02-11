@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import Cookies from "js-cookie";
 import { Send } from "lucide-react";
+import GetUserByID from "./GetUserByID";
 
 const socket = io("https://enlighten-ed.onrender.com", {
   path: "/socket.io", // Explicitly set the socket.io path
@@ -13,15 +14,21 @@ const socket = io("https://enlighten-ed.onrender.com", {
   reconnectionDelay: 1000,
 });
 
-function ChatApp({receiver}) {
+function ChatApp({ receiver }) {
   const userID = JSON.parse(Cookies.get("auth"))["user_id"];
+  const username = JSON.parse(Cookies.get("auth"))["username"];
+  const recieverObj = GetUserByID({ userID: receiver });
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     socket.on("send message", (data) => {
-      if(data.sender === userID || data.receiver === userID || receiver === "public"){
+      if (
+        data.sender === userID ||
+        data.receiver === userID ||
+        receiver === 0
+      ) {
         setMessages((prevMessages) => [...prevMessages, data]);
       }
     });
@@ -32,7 +39,7 @@ function ChatApp({receiver}) {
   }, []);
 
   useEffect(() => {
-    const messageContainer = document.getElementById('message-container');
+    const messageContainer = document.getElementById("message-container");
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }, [messages]);
 
@@ -54,7 +61,10 @@ function ChatApp({receiver}) {
   };
   return (
     <div className="flex flex-col w-full">
-      <div id="message-container" className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll scroll-smooth no-scrollbar">
+      <div
+        id="message-container"
+        className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll scroll-smooth no-scrollbar"
+      >
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -63,7 +73,7 @@ function ChatApp({receiver}) {
             }`}
           >
             <div className="chat-header">
-              {msg.sender}
+              {msg.sender === userID ? username : recieverObj["username"]}
               <time className="ml-2 text-xs opacity-50">
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </time>
@@ -87,7 +97,7 @@ function ChatApp({receiver}) {
           type="submit"
           className="p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
         >
-          <Send/>
+          <Send />
         </button>
       </form>
     </div>

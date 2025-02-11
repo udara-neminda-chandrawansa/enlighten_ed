@@ -50,10 +50,14 @@ function Dashboard() {
   const [activeSpace, setActiveSpace] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [location, navigate] = useLocation();
-  const [reciever, setReciever] = useState("public"); // for messaging
+  const [reciever, setReciever] = useState("0"); // for messaging
 
   // auth cookie data & related methods
   const isAuthenticated = !!Cookies.get("auth");
+
+  useEffect(()=>{
+    console.log(reciever);
+  }, [reciever]);
 
   // logout method
   const handleLogout = () => {
@@ -118,7 +122,7 @@ function Dashboard() {
                 <Options />
                 <Notifications />
               </div>
-              <ChatApp receiver={"public"} />
+              <ChatApp receiver={"0"} />
             </div>
           </div>
         );
@@ -151,9 +155,9 @@ function Dashboard() {
                 <div className="flex flex-col gap-2 md:border-r md:pr-2 md:mr-2 md:w-1/2">
                   <div
                     className={`px-2 py-3 cursor-pointer rounded-md bg-base-200 ${
-                      reciever === "public" ? "border shadow-md font-semibold" : ""
+                      reciever === "0" ? "border shadow-md font-semibold" : ""
                     }`}
-                    onClick={() => setReciever("public")}
+                    onClick={() => setReciever("0")}
                   >
                     Public Channel
                   </div>
