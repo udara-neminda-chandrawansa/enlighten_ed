@@ -14,14 +14,14 @@ const socket = io("https://enlighten-ed.onrender.com", {
 });
 
 function ChatApp({receiver}) {
-  const username = JSON.parse(Cookies.get("auth"))["username"];
+  const userID = JSON.parse(Cookies.get("auth"))["user_id"];
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     socket.on("send message", (data) => {
-      if(data.sender === username || data.receiver === username || receiver === "public"){
+      if(data.sender === userID || data.receiver === userID || receiver === "public"){
         setMessages((prevMessages) => [...prevMessages, data]);
       }
     });
@@ -39,9 +39,9 @@ function ChatApp({receiver}) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (message && username) {
+    if (message && userID) {
       const messageData = {
-        sender: username,
+        sender: userID,
         receiver: receiver,
         content: message,
         type: "message",
@@ -54,12 +54,12 @@ function ChatApp({receiver}) {
   };
   return (
     <div className="flex flex-col w-full">
-      <div id="message-container" className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll scroll-smooth">
+      <div id="message-container" className="flex-grow h-[68dvh] lg:h-[65dvh] overflow-y-scroll scroll-smooth no-scrollbar">
         {messages.map((msg, index) => (
           <div
             key={index}
             className={`chat ${
-              msg.sender === username ? "chat-end" : "chat-start"
+              msg.sender === userID ? "chat-end" : "chat-start"
             }`}
           >
             <div className="chat-header">

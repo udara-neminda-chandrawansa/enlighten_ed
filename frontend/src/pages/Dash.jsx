@@ -149,11 +149,21 @@ function Dashboard() {
             <div className="p-4 rounded-lg bg-base-100">
               <div className="flex max-md:flex-col">
                 <div className="flex flex-col gap-2 md:border-r md:pr-2 md:mr-2 md:w-1/2">
+                  <div
+                    className={`px-2 py-3 cursor-pointer rounded-md bg-base-200 ${
+                      reciever === "public" ? "border shadow-md font-semibold" : ""
+                    }`}
+                    onClick={() => setReciever("public")}
+                  >
+                    Public Channel
+                  </div>
                   {LoadUsers().map((user, index) => (
                     <div
                       key={index}
-                      className={`px-2 py-3 cursor-pointer rounded-md bg-base-200 ${reciever === user["username"] ? "border shadow-md" : ""}`}
-                      onClick={() => setReciever(user["username"])}
+                      className={`px-2 py-3 cursor-pointer rounded-md bg-base-200 ${
+                        reciever === user["user_id"] ? "border shadow-md font-semibold" : ""
+                      }`}
+                      onClick={() => setReciever(user["user_id"])}
                     >
                       {user["username"]}
                     </div>
