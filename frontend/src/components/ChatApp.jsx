@@ -22,6 +22,10 @@ function ChatApp({ receiver }) {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
+  useEffect(()=>{
+    console.log(recieverObj);
+  }, [recieverObj])
+
   useEffect(() => {
     socket.on("send message", (data) => {
       if (
@@ -49,6 +53,7 @@ function ChatApp({ receiver }) {
     if (message && userID) {
       const messageData = {
         sender: userID,
+        senderName: username,
         receiver: receiver,
         content: message,
         type: "message",
@@ -56,6 +61,7 @@ function ChatApp({ receiver }) {
       };
 
       socket.emit("send message", messageData);
+      console.log(userID);
       setMessage("");
     }
   };
@@ -73,7 +79,7 @@ function ChatApp({ receiver }) {
             }`}
           >
             <div className="chat-header">
-              {msg.sender === userID ? username : recieverObj["username"]}
+              {msg.senderName}
               <time className="ml-2 text-xs opacity-50">
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </time>
