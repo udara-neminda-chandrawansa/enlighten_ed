@@ -22,9 +22,11 @@ function ChatApp({ receiver }) {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
+  {/*
   useEffect(()=>{
     console.log(recieverObj);
   }, [recieverObj])
+  */}
 
   useEffect(() => {
     socket.on("send message", (data) => {
@@ -61,7 +63,7 @@ function ChatApp({ receiver }) {
       };
 
       socket.emit("send message", messageData);
-      console.log(userID);
+      //console.log(userID);
       setMessage("");
     }
   };

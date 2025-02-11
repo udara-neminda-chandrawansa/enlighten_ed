@@ -290,7 +290,7 @@ function Dashboard() {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto no-scrollbar">
           {/* Toggle Button */}
           <button
             onClick={() => setSidebarOpen(!isSidebarOpen)}
