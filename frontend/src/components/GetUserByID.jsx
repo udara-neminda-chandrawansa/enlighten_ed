@@ -28,7 +28,7 @@ const GetUserByID = ({ userID }) => {
       if (userID !== "0") {
         const result = await getUser(userID);
         if (result.success) {
-          setUser(result.users);
+          setUser(result.msgs);
           //console.log("Users Loaded!");
         } else {
           console.log("Message:", result.message, " | " , userID);

@@ -48,7 +48,7 @@ const Options = () => {
     const fetchUsers = async () => {
       const result = await getUsers();
       if (result.success) {
-        setUsers(result.users);
+        setUsers(result.msgs);
         //console.log("Users Loaded!");
       } else {
         console.log("Message:", result.message);
