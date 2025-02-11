@@ -55,10 +55,14 @@ function Dashboard() {
   // auth cookie data & related methods
   const isAuthenticated = !!Cookies.get("auth");
 
+  {
+    /*
   useEffect(()=>{
     console.log(reciever);
   }, [reciever]);
-
+    */
+  }
+  
   // logout method
   const handleLogout = () => {
     resetPeerID();
@@ -165,7 +169,9 @@ function Dashboard() {
                     <div
                       key={index}
                       className={`px-2 py-3 cursor-pointer rounded-md bg-base-200 ${
-                        reciever === user["user_id"] ? "border shadow-md font-semibold" : ""
+                        reciever === user["user_id"]
+                          ? "border shadow-md font-semibold"
+                          : ""
                       }`}
                       onClick={() => setReciever(user["user_id"])}
                     >

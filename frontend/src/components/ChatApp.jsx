@@ -27,7 +27,7 @@ function ChatApp({ receiver }) {
       if (
         data.sender === userID ||
         data.receiver === userID ||
-        receiver === 0
+        receiver === "0"
       ) {
         setMessages((prevMessages) => [...prevMessages, data]);
       }
