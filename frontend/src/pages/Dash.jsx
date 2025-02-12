@@ -22,6 +22,7 @@ import VirtualClassMgmt from "../components/VirtualClassMgmt";
 import ChatApp from "../components/ChatApp";
 import db_con from "../components/dbconfig";
 import LoadUsers from "../components/LoadUsers";
+import ExamCreator from "../components/ExamCreator";
 
 // this is to reset peer_id before user closes the browser/tab
 const resetPeerID = async () => {
@@ -62,7 +63,7 @@ function Dashboard() {
   }, [reciever]);
     */
   }
-  
+
   // logout method
   const handleLogout = () => {
     resetPeerID();
@@ -136,6 +137,15 @@ function Dashboard() {
             <h2 className="mb-4 text-2xl font-bold">Exam Mode Space</h2>
             <div className="p-4 rounded-lg bg-base-100">
               <p>Exam settings and controls will go here</p>
+            </div>
+          </div>
+        );
+      case "Exam Creation Space":
+        return (
+          <div className="p-6">
+            <h2 className="mb-4 text-2xl font-bold">Exam Creation Space</h2>
+            <div className="p-4 rounded-lg bg-base-100">
+              <ExamCreator/>
             </div>
           </div>
         );
