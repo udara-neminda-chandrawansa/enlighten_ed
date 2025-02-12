@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import Cookies from "js-cookie";
 import { Send } from "lucide-react";
-import GetUserByID from "./GetUserByID";
+//import GetUserByID from "./GetUserByID";
 import db_con from "./dbconfig";
 
 const socket = io("https://enlighten-ed.onrender.com", {
@@ -82,7 +82,7 @@ function ChatApp({ receiver }) {
       }
     };
     fetchMessages();
-  }, [receiver, messagesFromDB]);
+  }, [receiver, messages]);
 
   useEffect(() => {
     socket.on("send message", (data) => {
