@@ -40,9 +40,14 @@ const getMsgs = async (receiver) => {
   try {
     const { data, error } = await db_con
       .from("messages")
-      .select("msg_from, msg_from_name, msg_to, msg_content, created_at") // Fetch data
-      .eq("msg_from", JSON.parse(Cookies.get("auth"))["user_id"]) // Include self
-      .eq("msg_to", receiver); // include reciever
+      .select("msg_from, msg_from_name, msg_to, msg_content, created_at")
+      .or(
+        `msg_from.eq.${JSON.parse(Cookies.get("auth"))["user_id"]},msg_to.eq.${
+          JSON.parse(Cookies.get("auth"))["user_id"]
+        }`
+      )
+      .or(`msg_from.eq.${receiver},msg_to.eq.${receiver}`)
+      .order("created_at", { ascending: true });
 
     if (error) {
       console.log("Messages Loading error:", error.message);
@@ -150,7 +155,8 @@ function ChatApp({ receiver }) {
                 <div className="opacity-50 chat-footer">Sent</div>
               </div>
             ))
-          : messagesFromDB.length > 0 ? messagesFromDB.map((msg, index) => (
+          : messagesFromDB.length > 0
+          ? messagesFromDB.map((msg, index) => (
               <div
                 key={index}
                 className={`chat ${
@@ -166,7 +172,8 @@ function ChatApp({ receiver }) {
                 <div className="chat-bubble">{msg["msg_content"]}</div>
                 <div className="opacity-50 chat-footer">Sent</div>
               </div>
-            )) : ""}
+            ))
+          : ""}
         <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="flex items-center gap-3 pt-3">
