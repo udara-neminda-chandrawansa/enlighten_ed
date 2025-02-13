@@ -89,7 +89,7 @@ function VirtualClassMgmt() {
                   onClick={() =>
                     document.getElementById("addStudModal").showModal()
                   }
-                  className="flex items-center gap-2 px-3 py-1 text-sm text-white bg-green-500 rounded-md"
+                  className="text-white btn btn-success"
                 >
                   <UserPlus/>
                   Add Students
@@ -131,7 +131,7 @@ function VirtualClassMgmt() {
       </div>
       <button
         onClick={() => document.getElementById("addClassModal").showModal()}
-        className="flex items-center gap-2 px-3 py-1 mt-3 text-sm text-white bg-green-500 rounded-md"
+        className="mt-4 text-white btn btn-success"
       >
         <School/>
         Add a New Class

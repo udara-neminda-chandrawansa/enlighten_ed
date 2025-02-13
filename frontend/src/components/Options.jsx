@@ -77,7 +77,7 @@ const Options = () => {
                 <span>{user.username}</span>
                 {!callAccepted && (
                   <button
-                    className="flex items-center gap-2 px-3 py-1 text-sm text-white bg-green-500 rounded-md"
+                    className="text-white btn btn-success"
                     onClick={() => callUser(user.peer_id)} // Use peer_id instead of user_id
                   >
                     <PhoneCall />
@@ -86,7 +86,7 @@ const Options = () => {
                 )}
                 {callAccepted && !callEnded ? (
                   <button
-                    className="flex items-center gap-2 px-3 py-1 text-sm text-white bg-red-500 rounded-md"
+                    className="text-white btn btn-error"
                     onClick={leaveCall}
                   >
                     <PhoneOff />

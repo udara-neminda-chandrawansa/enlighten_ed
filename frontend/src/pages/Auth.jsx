@@ -40,7 +40,7 @@ const signup = async (username, email, password, user_type) => {
     // Insert new user
     const { data, error } = await db_con
       .from("users")
-      .insert([{ username, email, password, user_type }]) // Consider hashing passwords
+      .insert([{ username, email, password, user_type }])
       .select()
       .single();
 

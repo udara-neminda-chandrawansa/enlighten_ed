@@ -20,13 +20,40 @@ const getMyClasses = async () => {
   }
 };
 
+const saveExam = async (class_id, lecturer_id, exam_name, exam_qs) => {
+  try {
+    // save exam
+    const { data, error } = await db_con
+      .from("exams")
+      .insert([{ class_id, lecturer_id, exam_name, exam_qs }])
+      .select()
+      .single();
+
+    if (error) {
+      console.log("Save error:", error.message);
+      return { success: false, message: "Save Failed!" };
+    }
+
+    return { success: true, exam: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, message: "Something went wrong!" };
+  }
+};
+
 function ExamCreator() {
   const [myClasses, setMyClasses] = useState([]); // list of classes
   const [examName, setExamName] = useState("");
   const [examType, setExamType] = useState("mcq");
   const [selectedClass, setSelectedClass] = useState(0);
   const [questions, setQuestions] = useState([]);
-  const [qsCount, setQsCount] = useState(1);
+  const [qsCount, setQsCount] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState({
+    question: "",
+    answers: ["", "", "", ""],
+    correctAnswer: 0,
+  });
+  const [currentQsIndex, setCurrentQsIndex] = useState(0);
 
   useEffect(() => {
     const fetchMyClasses = async () => {
@@ -40,6 +67,48 @@ function ExamCreator() {
 
     fetchMyClasses();
   }, []);
+
+  const handleAddQuestion = () => {
+    setQuestions((prevQuestions) => {
+      const updatedQuestions = [...prevQuestions, currentQuestion];
+      console.log("Updated Questions:", updatedQuestions); // Correctly logs updated list
+      return updatedQuestions;
+    });
+
+    setCurrentQuestion({
+      question: "",
+      answers: ["", "", "", ""],
+      correctAnswer: 0,
+    });
+
+    if (currentQsIndex < qsCount - 1) {
+      setCurrentQsIndex((prevIndex) => prevIndex + 1);
+
+      setTimeout(() => {
+        document.getElementById("mcqModal").showModal();
+      }, 100);
+    } else {
+      setTimeout(() => {
+        document.getElementById("mcqModal").close();
+      }, 100);
+    }
+  };
+
+  const handleExamSave = async (event) => {
+    event.preventDefault();
+    const result = await saveExam(selectedClass, JSON.parse(Cookies.get("auth"))["user_id"], examName, JSON.stringify(questions));
+
+    if (result.success) {
+      alert(`Save successful!`);
+    } else {
+      alert(result.message);
+    }
+  };
+
+  // Logs the final updated state when it changes
+  useEffect(() => {
+    console.log("All questions after update:", questions);
+  }, [questions]);
 
   return (
     <div>
@@ -56,6 +125,42 @@ function ExamCreator() {
       >
         Create Exam
       </button>
+      {questions.length > 0 && (
+        <button className="mt-4 ml-4 btn" onClick={handleExamSave}>Save Exam</button>
+      )}
+      <div className="mt-4 overflow-x-auto">
+        <table className="table table-zebra">
+          {/* Table Head */}
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Answer 1</th>
+              <th>Answer 2</th>
+              <th>Answer 3</th>
+              <th>Answer 4</th>
+              <th>Correct Answer</th>
+            </tr>
+          </thead>
+          {/* Table Body */}
+          <tbody>
+            {questions.map((question, index) => (
+              <tr key={index}>
+                <th>{index + 1}</th>
+                <td>{question.question}</td>
+                <td>{question.answers[0]}</td>
+                <td>{question.answers[1]}</td>
+                <td>{question.answers[2]}</td>
+                <td>{question.answers[3]}</td>
+                <td className="font-bold">
+                  {question.answers[question.correctAnswer]}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {/*mcq qs modal*/}
       <dialog id="mcqModal" className="modal">
         <div className="modal-box">
@@ -65,44 +170,50 @@ function ExamCreator() {
               type="text"
               className="w-full input input-bordered"
               placeholder="Question?"
+              value={currentQuestion.question}
+              onChange={(e) =>
+                setCurrentQuestion({
+                  ...currentQuestion,
+                  question: e.target.value,
+                })
+              }
             />
-            <span className="flex items-center gap-2">
-              <input type="radio" className="radio radio-success" name="ans" />
-              <input
-                type="text"
-                className="w-full input input-bordered"
-                placeholder="Answer 1"
-              />
-            </span>
-            <span className="flex items-center gap-2">
-              <input type="radio" className="radio radio-success" name="ans" />
-              <input
-                type="text"
-                className="w-full input input-bordered"
-                placeholder="Answer 2"
-              />
-            </span>
-            <span className="flex items-center gap-2">
-              <input type="radio" className="radio radio-success" name="ans" />
-              <input
-                type="text"
-                className="w-full input input-bordered"
-                placeholder="Answer 3"
-              />
-            </span>
-            <span className="flex items-center gap-2">
-              <input type="radio" className="radio radio-success" name="ans" />
-              <input
-                type="text"
-                className="w-full input input-bordered"
-                placeholder="Answer 4"
-              />
-            </span>
+            {[0, 1, 2, 3].map((index) => (
+              <span key={index} className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  className="radio radio-success"
+                  name="ans"
+                  checked={currentQuestion.correctAnswer === index}
+                  onChange={() =>
+                    setCurrentQuestion({
+                      ...currentQuestion,
+                      correctAnswer: index,
+                    })
+                  }
+                />
+                <input
+                  type="text"
+                  className="w-full input input-bordered"
+                  placeholder={`Answer ${index + 1}`}
+                  value={currentQuestion.answers[index]}
+                  onChange={(e) => {
+                    const newAnswers = [...currentQuestion.answers];
+                    newAnswers[index] = e.target.value;
+                    setCurrentQuestion({
+                      ...currentQuestion,
+                      answers: newAnswers,
+                    });
+                  }}
+                />
+              </span>
+            ))}
           </p>
           <div className="modal-action">
             <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Add Question</button>
+              <button className="btn" onClick={handleAddQuestion}>
+                Add Question
+              </button>
             </form>
           </div>
         </div>
@@ -165,18 +276,17 @@ function ExamCreator() {
               min={1}
               max={30}
               value={qsCount}
-              onChange={(e) => setQsCount(e.target.value)}
+              onChange={(e) => setQsCount(parseInt(e.target.value) || 1)}
               placeholder="Number of Questions"
             />
           </div>
           <div className="modal-action">
             <form method="dialog">
-              {/* after providing basic info, start collecting qs info */}
               <button
                 className="btn"
                 onClick={() => {
-                  document.getElementById("mcqModal").showModal(),
-                    console.log(selectedClass);
+                  document.getElementById("mcqModal").showModal();
+                  setCurrentQsIndex(0); // Reset the question index
                 }}
               >
                 Close

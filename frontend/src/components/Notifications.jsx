@@ -12,7 +12,7 @@ const Notifications = () => {
           <p> {call.name} is calling... </p>
           <button
             onClick={answerCall}
-            className="p-1 text-sm rounded-md bg-base-300"
+            className="btn"
           >
             Answer Call
           </button>
