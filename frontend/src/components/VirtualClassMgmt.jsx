@@ -1,7 +1,7 @@
 import db_con from "./dbconfig";
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
-import { UserPlus, School } from "lucide-react";
+import { UserPlus, School, PlusCircle } from "lucide-react";
 
 const getMyClasses = async () => {
   try {
@@ -21,7 +21,7 @@ const getMyClasses = async () => {
   }
 };
 
-// Fetch students belonging to a specific class
+// Fetches students belonging to a specific class
 const getStudentsByClass = async (classId) => {
   try {
     const { data, error } = await db_con
@@ -51,9 +51,77 @@ const getStudentsByClass = async (classId) => {
   }
 };
 
+// Fetches students who are not yet registered for a given class
+const getUnregisteredStudentsByClass = async (classId) => {
+  try {
+    // Step 1: Fetch all students who are already registered for the class
+    const { data: registeredStudents, error: registeredError } = await db_con
+      .from("classrooms_students")
+      .select("student_id")
+      .eq("class_id", classId);
+
+    if (registeredError) {
+      console.log(
+        `Error fetching registered students for class ${classId}:`,
+        registeredError.message
+      );
+      return { success: false, students: [] };
+    }
+
+    // Step 2: Extract the list of registered student IDs
+    const registeredStudentIds = registeredStudents.map(
+      (record) => record.student_id
+    );
+
+    // Step 3: Fetch all students who are not registered for the class
+    const { data, error } = await db_con
+      .from("users")
+      .select("user_id, username, email")
+      .eq("user_type", "student")
+      .not("user_id", "in", `(${registeredStudentIds.join(",")})`); // Exclude the registered students
+
+    if (error) {
+      console.log(
+        `Error fetching unregistered students for class ${classId}:`,
+        error.message
+      );
+      console.log(registeredStudentIds);
+      return { success: false, students: [] };
+    }
+
+    return { success: true, students: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, students: [] };
+  }
+};
+
+const addStudentToClass = async (class_id, student_id) => {
+  try {
+    // add student to class
+    const { data, error } = await db_con
+      .from("classrooms_students")
+      .insert([{ class_id, student_id }])
+      .select()
+      .single();
+
+    if (error) {
+      console.log("Save error:", error.message);
+      return { success: false, message: "Save Failed!" };
+    }
+
+    return { success: true, student: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, message: "Something went wrong!" };
+  }
+};
+
 function VirtualClassMgmt() {
   const [myClasses, setMyClasses] = useState([]);
   const [classStudents, setClassStudents] = useState({}); // Store students per class
+  const [unregStudents, setUnregStudents] = useState([]); // unregistered students (for a specific class)
+  const [thisClassID, setThisClassID] = useState(1);
 
   useEffect(() => {
     const fetchMyClasses = async () => {
@@ -74,7 +142,30 @@ function VirtualClassMgmt() {
     };
 
     fetchMyClasses();
-  }, []);
+  }, [classStudents]);
+
+  const fetchUnregStudents = async () => {
+    const result = await getUnregisteredStudentsByClass(thisClassID);
+    if (result.success) {
+      setUnregStudents(result.students);
+    } else {
+      console.log("Message:", result.message);
+    }
+  };
+
+  // on hold..
+  const handleAddStudent = async (classID, studentID) => {
+    const result = await addStudentToClass(classID, studentID);
+
+    if (result.success) {
+      alert(`Save successful!`);
+      setUnregStudents((prevStudents) =>
+        prevStudents.filter((student) => student.user_id !== studentID)
+      );
+    } else {
+      alert(result.message);
+    }
+  };
 
   return (
     <div>
@@ -86,12 +177,14 @@ function VirtualClassMgmt() {
               <span className="flex items-center gap-2">
                 {vclass.classname}
                 <button
-                  onClick={() =>
-                    document.getElementById("addStudModal").showModal()
-                  }
+                  onClick={() => {
+                    setThisClassID(vclass.class_id);
+                    document.getElementById("addStudModal").showModal();
+                    fetchUnregStudents();
+                  }}
                   className="text-white btn btn-success"
                 >
-                  <UserPlus/>
+                  <UserPlus />
                   Add Students
                 </button>
               </span>
@@ -133,7 +226,7 @@ function VirtualClassMgmt() {
         onClick={() => document.getElementById("addClassModal").showModal()}
         className="mt-4 text-white btn btn-success"
       >
-        <School/>
+        <School />
         Add a New Class
       </button>
       {/*add students modal*/}
@@ -141,7 +234,35 @@ function VirtualClassMgmt() {
         <div className="modal-box">
           <h3 className="text-lg font-bold">Add Students</h3>
           <div className="flex flex-col gap-3 mt-3">
-            Students will be added here...
+            <table className="table table-zebra">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Add to Class</th>
+                </tr>
+              </thead>
+              <tbody>
+                {unregStudents.map((student) => (
+                  <tr key={student.user_id}>
+                    <td>{student.user_id}</td>
+                    <td>{student.username}</td>
+                    <td>{student.email}</td>
+                    <td>
+                      <button
+                        className="flex w-full gap-2 text-white btn btn-success"
+                        onClick={() => {
+                          handleAddStudent(thisClassID, student.user_id);
+                        }}
+                      >
+                        <PlusCircle />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">
