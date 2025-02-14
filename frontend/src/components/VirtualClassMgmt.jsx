@@ -182,7 +182,7 @@ function VirtualClassMgmt() {
                     document.getElementById("addStudModal").showModal();
                     fetchUnregStudents();
                   }}
-                  className="text-white btn btn-success"
+                  className="text-white btn btn-success btn-sm"
                 >
                   <UserPlus />
                   Add Students
@@ -224,7 +224,7 @@ function VirtualClassMgmt() {
       </div>
       <button
         onClick={() => document.getElementById("addClassModal").showModal()}
-        className="mt-4 text-white btn btn-success"
+        className="mt-4 text-white btn btn-success btn-sm"
       >
         <School />
         Add a New Class

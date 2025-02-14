@@ -210,7 +210,7 @@ function Dashboard() {
             <UpdateAccount />
             <div className="mt-6">
               <button
-                className="flex items-center gap-3 p-2 text-white bg-red-500 rounded-md"
+                className="text-white btn btn-error btn-sm"
                 onClick={() => handleLogout()}
               >
                 <LogOut />
