@@ -20,12 +20,39 @@ const getMyClasses = async () => {
   }
 };
 
-const saveExam = async (class_id, lecturer_id, exam_name, exam_qs) => {
+const getMyExams = async () => {
+  try {
+    const { data, error } = await db_con
+      .from("exams")
+      .select(
+        "exam_id, class_id, lecturer_id, exam_name, exam_type, exam_qs, created_at"
+      )
+      .eq("lecturer_id", JSON.parse(Cookies.get("auth"))["user_id"])
+      .order("exam_id", { ascending: true });
+
+    if (error) {
+      console.log("Exams Loading error:", error.message);
+      return { success: false, message: "Load Failed!" };
+    }
+    return { success: true, exams: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, message: "Something went wrong!" };
+  }
+};
+
+const saveExam = async (
+  class_id,
+  lecturer_id,
+  exam_name,
+  exam_type,
+  exam_qs
+) => {
   try {
     // save exam
     const { data, error } = await db_con
       .from("exams")
-      .insert([{ class_id, lecturer_id, exam_name, exam_qs }])
+      .insert([{ class_id, lecturer_id, exam_name, exam_type, exam_qs }])
       .select()
       .single();
 
@@ -43,6 +70,9 @@ const saveExam = async (class_id, lecturer_id, exam_name, exam_qs) => {
 
 function ExamCreator() {
   const [myClasses, setMyClasses] = useState([]); // list of classes
+  const [myExams, setMyExams] = useState([]); // list of exams
+  const [selectedQuestions, setSelectedQuestions] = useState([]); // for displaying questions of a specific exam using a modal
+  // below data for creating and saving exams (used in form elements)
   const [examName, setExamName] = useState("");
   const [examType, setExamType] = useState("mcq");
   const [selectedClass, setSelectedClass] = useState(0);
@@ -66,7 +96,18 @@ function ExamCreator() {
     };
 
     fetchMyClasses();
-  }, []);
+
+    const fetchMyExams = async () => {
+      const result = await getMyExams();
+      if (result.success) {
+        setMyExams(result.exams);
+      } else {
+        console.log("Message:", result.message);
+      }
+    };
+
+    fetchMyExams();
+  }, [currentQuestion]);
 
   const handleAddQuestion = () => {
     setQuestions((prevQuestions) => {
@@ -96,19 +137,30 @@ function ExamCreator() {
 
   const handleExamSave = async (event) => {
     event.preventDefault();
-    const result = await saveExam(selectedClass, JSON.parse(Cookies.get("auth"))["user_id"], examName, JSON.stringify(questions));
+    const result = await saveExam(
+      selectedClass,
+      JSON.parse(Cookies.get("auth"))["user_id"],
+      examName,
+      examType,
+      JSON.stringify(questions)
+    );
 
     if (result.success) {
-      alert(`Save successful!`);
+      alert(`Save successful! The page will be reloaded now.`);
+      window.location.reload();
     } else {
       alert(result.message);
     }
   };
 
   // Logs the final updated state when it changes
+  {
+    /*
   useEffect(() => {
     console.log("All questions after update:", questions);
   }, [questions]);
+  */
+  }
 
   return (
     <div>
@@ -126,35 +178,79 @@ function ExamCreator() {
         Create Exam
       </button>
       {questions.length > 0 && (
-        <button className="mt-4 ml-4 btn" onClick={handleExamSave}>Save Exam</button>
+        <button className="mt-4 ml-4 btn" onClick={handleExamSave}>
+          Save Exam
+        </button>
       )}
-      <div className="mt-4 overflow-x-auto">
+      {questions.length > 0 && (
+        <div className="mt-4 overflow-x-auto border">
+          <table className="table table-zebra">
+            {/* Table Head */}
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Question</th>
+                <th>Answer 1</th>
+                <th>Answer 2</th>
+                <th>Answer 3</th>
+                <th>Answer 4</th>
+                <th>Correct Answer</th>
+              </tr>
+            </thead>
+            {/* Table Body */}
+            <tbody>
+              {questions.map((question, index) => (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <td>{question.question}</td>
+                  <td>{question.answers[0]}</td>
+                  <td>{question.answers[1]}</td>
+                  <td>{question.answers[2]}</td>
+                  <td>{question.answers[3]}</td>
+                  <td className="font-bold">
+                    {question.answers[question.correctAnswer]}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <h1 className="mt-4 font-semibold">My Exams</h1>
+      <div className="mt-4 overflow-x-auto border">
         <table className="table table-zebra">
           {/* Table Head */}
           <thead>
             <tr>
               <th>#</th>
-              <th>Question</th>
-              <th>Answer 1</th>
-              <th>Answer 2</th>
-              <th>Answer 3</th>
-              <th>Answer 4</th>
-              <th>Correct Answer</th>
+              <th>Exam Name</th>
+              <th>Exam Type</th>
+              <th>For Class</th>
+              <th>Exam Questions</th>
+              <th>Created At</th>
             </tr>
           </thead>
           {/* Table Body */}
           <tbody>
-            {questions.map((question, index) => (
+            {myExams.map((exam, index) => (
               <tr key={index}>
                 <th>{index + 1}</th>
-                <td>{question.question}</td>
-                <td>{question.answers[0]}</td>
-                <td>{question.answers[1]}</td>
-                <td>{question.answers[2]}</td>
-                <td>{question.answers[3]}</td>
-                <td className="font-bold">
-                  {question.answers[question.correctAnswer]}
+                <td>{exam.exam_name}</td>
+                <td>{exam.exam_type}</td>
+                <td>{exam.class_id}</td>
+                <td>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => {
+                      setSelectedQuestions(JSON.parse(exam.exam_qs));
+                      document.getElementById("examQsDisplayModal").showModal();
+                    }}
+                  >
+                    View Questions
+                  </button>
                 </td>
+                <td>{new Date(exam.created_at).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
@@ -294,6 +390,36 @@ function ExamCreator() {
             </form>
           </div>
         </div>
+      </dialog>
+      {/*exam questions display modal*/}
+      <dialog id="examQsDisplayModal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Questions</h3>
+          {selectedQuestions.map((q, index) => (
+            <div key={index} className="mt-4">
+              <p>
+                <strong>Q{index + 1}:</strong> {q.question}
+              </p>
+              <ul>
+                {q.answers.map((answer, i) => (
+                  <li
+                    key={i}
+                    className={`${
+                      q.correctAnswer === i
+                        ? "font-semibold text-green-800 underline"
+                        : ""
+                    }`}
+                  >
+                    {answer}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
     </div>
   );
