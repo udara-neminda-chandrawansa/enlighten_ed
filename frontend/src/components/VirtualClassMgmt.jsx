@@ -117,11 +117,33 @@ const addStudentToClass = async (class_id, student_id) => {
   }
 };
 
+const createNewClass = async (classname, lecturer_id) => {
+  try {
+    // add student to class
+    const { data, error } = await db_con
+      .from("classrooms")
+      .insert([{ classname, lecturer_id }])
+      .select()
+      .single();
+
+    if (error) {
+      console.log("Save error:", error.message);
+      return { success: false, message: "Save Failed!" };
+    }
+
+    return { success: true, class: data };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, message: "Something went wrong!" };
+  }
+};
+
 function VirtualClassMgmt() {
   const [myClasses, setMyClasses] = useState([]);
   const [classStudents, setClassStudents] = useState({}); // Store students per class
   const [unregStudents, setUnregStudents] = useState([]); // unregistered students (for a specific class)
-  const [thisClassID, setThisClassID] = useState(1);
+  const [newClassName, setNewClassName] = useState(""); // for adding new classes
+  const [selectedClassID, setSelectedClassID] = useState(0);
 
   useEffect(() => {
     const fetchMyClasses = async () => {
@@ -144,8 +166,9 @@ function VirtualClassMgmt() {
     fetchMyClasses();
   }, [classStudents]);
 
-  const fetchUnregStudents = async () => {
+  const fetchUnregStudents = async (thisClassID) => {
     const result = await getUnregisteredStudentsByClass(thisClassID);
+    setSelectedClassID(thisClassID);
     if (result.success) {
       setUnregStudents(result.students);
     } else {
@@ -153,7 +176,6 @@ function VirtualClassMgmt() {
     }
   };
 
-  // on hold..
   const handleAddStudent = async (classID, studentID) => {
     const result = await addStudentToClass(classID, studentID);
 
@@ -167,22 +189,42 @@ function VirtualClassMgmt() {
     }
   };
 
+  const handleCreateClass = async (classname) => {
+    const result = await createNewClass(
+      classname,
+      JSON.parse(Cookies.get("auth"))["user_id"]
+    );
+
+    if (result.success) {
+      alert(`Save successful! The page will be reloaded now.`);
+      window.location.reload();
+    } else {
+      alert(result.message);
+    }
+  };
+
   return (
     <div>
       <p className="text-xl font-semibold">Your Classes</p>
+      <button
+        onClick={() => document.getElementById("addClassModal").showModal()}
+        className="mt-4 text-white btn btn-success btn-sm"
+      >
+        <School />
+        Add a New Class
+      </button>
       <div className="flex flex-col gap-3 mt-3">
         {myClasses.length > 0 ? (
-          myClasses.map((vclass) => (
-            <div key={vclass.class_id}>
-              <span className="flex items-center gap-2">
-                {vclass.classname}
+          myClasses.map((vclass, index) => (
+            <div key={index}>
+              <span className="flex gap-2 pt-2 border-t md:items-center max-md:flex-col">
+              <p className="font-semibold">{vclass.class_id}.</p> {vclass.classname}
                 <button
                   onClick={() => {
-                    setThisClassID(vclass.class_id);
                     document.getElementById("addStudModal").showModal();
-                    fetchUnregStudents();
+                    fetchUnregStudents(vclass.class_id);
                   }}
-                  className="text-white btn btn-success btn-sm"
+                  className="text-white btn btn-success btn-sm w-fit"
                 >
                   <UserPlus />
                   Add Students
@@ -222,13 +264,7 @@ function VirtualClassMgmt() {
           <p className="text-sm text-gray-500">No classes available</p>
         )}
       </div>
-      <button
-        onClick={() => document.getElementById("addClassModal").showModal()}
-        className="mt-4 text-white btn btn-success btn-sm"
-      >
-        <School />
-        Add a New Class
-      </button>
+
       {/*add students modal*/}
       <dialog id="addStudModal" className="modal">
         <div className="modal-box">
@@ -253,7 +289,7 @@ function VirtualClassMgmt() {
                       <button
                         className="flex w-full gap-2 text-white btn btn-success"
                         onClick={() => {
-                          handleAddStudent(thisClassID, student.user_id);
+                          handleAddStudent(selectedClassID, student.user_id);
                         }}
                       >
                         <PlusCircle />
@@ -274,7 +310,18 @@ function VirtualClassMgmt() {
         <div className="modal-box">
           <h3 className="text-lg font-bold">Add a Class</h3>
           <div className="flex flex-col gap-3 mt-3">
-            Input Fields will be added here...
+            <input
+              type="text"
+              className="input input-bordered"
+              placeholder="Provide a class name"
+              onChange={(e) => setNewClassName(e.target.value)}
+            />
+            <button
+              className="btn"
+              onClick={() => handleCreateClass(newClassName)}
+            >
+              Save
+            </button>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">
