@@ -13,6 +13,7 @@ import {
   School,
   Bookmark,
   LogOut,
+  Calendar,
 } from "lucide-react";
 import VideoPlayer from "../components/VideoPlayer";
 import Options from "../components/Options";
@@ -24,6 +25,7 @@ import db_con from "../components/dbconfig";
 import LoadUsers from "../components/LoadUsers";
 import ExamCreator from "../components/ExamCreator";
 import ExamPortal from "../components/ExamPortal";
+import TaskManagement from "../components/TaskManagement";
 
 // this is to reset peer_id before user closes the browser/tab
 const resetPeerID = async () => {
@@ -97,6 +99,7 @@ function Dashboard() {
     [<Paperclip />, "Exam Mode"],
     [<Users2Icon />, "Commune Space"],
     [<Flag />, "Quiz Space"],
+    [<Calendar />, "Calendar"],
     [<User2Icon />, "Account Management"],
   ];
 
@@ -137,7 +140,7 @@ function Dashboard() {
           <div className="p-6">
             <h2 className="mb-4 text-2xl font-bold">Exam Mode Space</h2>
             <div className="p-4 rounded-lg bg-base-100">
-              <ExamPortal/>
+              <ExamPortal />
             </div>
           </div>
         );
@@ -146,7 +149,7 @@ function Dashboard() {
           <div className="p-6">
             <h2 className="mb-4 text-2xl font-bold">Exam Creation Space</h2>
             <div className="p-4 rounded-lg bg-base-100">
-              <ExamCreator/>
+              <ExamCreator />
             </div>
           </div>
         );
@@ -201,6 +204,15 @@ function Dashboard() {
             <h2 className="mb-4 text-2xl font-bold">Quiz Space</h2>
             <div className="p-4 rounded-lg bg-base-100">
               <p>Quiz creation and management tools will go here</p>
+            </div>
+          </div>
+        );
+      case "Calendar":
+        return (
+          <div className="p-6">
+            <h2 className="mb-4 text-2xl font-bold">Calendar</h2>
+            <div className="p-4 rounded-lg bg-base-100">
+              <TaskManagement/>
             </div>
           </div>
         );

@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { SocketContext } from "../Context";
 import Cookies from "js-cookie";
 import db_con from "../components/dbconfig";
-import { PhoneCall, PhoneOff } from "lucide-react";
+import { PhoneCall, PhoneOff, Monitor } from "lucide-react";
 
 const getUsers = async () => {
   try {
@@ -39,7 +39,7 @@ const updatePeerId = async (peerId) => {
 };
 
 const Options = () => {
-  const { callAccepted, setName, callEnded, leaveCall, callUser } =
+  const { callAccepted, setName, callEnded, leaveCall, callUser, shareScreen, stopSharing, isScreenSharing } =
     useContext(SocketContext);
   const [users, setUsers] = useState([]);
   const { me } = useContext(SocketContext);
@@ -85,14 +85,17 @@ const Options = () => {
                   </button>
                 )}
                 {callAccepted && !callEnded ? (
-                  <button
-                    className="text-white btn btn-error"
-                    onClick={leaveCall}
-                  >
+                <>
+                  <button className="text-white btn btn-error" onClick={leaveCall}>
                     <PhoneOff />
                     Hang up
                   </button>
-                ) : null}
+                  <button className="text-white btn btn-info" onClick={isScreenSharing ? stopSharing : shareScreen}>
+                    <Monitor />
+                    {isScreenSharing ? "Stop Sharing" : "Share Screen"}
+                  </button>
+                </>
+              ) : null}
               </div>
             ))
           ) : (

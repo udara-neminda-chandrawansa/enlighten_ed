@@ -18,6 +18,8 @@ const ContextProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();
+  const [screenStream, setScreenStream] = useState(null);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [name, setName] = useState("");
   const [call, setCall] = useState({});
   const [me, setMe] = useState("");
@@ -74,7 +76,7 @@ const ContextProvider = ({ children }) => {
     peer.signal(call.signal);
     connectionRef.current = peer;
   };
-  
+
   const callUser = (peerId) => {
     if (!peerId) {
       console.error("Invalid Peer ID");
@@ -111,6 +113,69 @@ const ContextProvider = ({ children }) => {
     window.location.reload();
   };
 
+  // **Screen Sharing**
+  const shareScreen = async () => {
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+  
+      if (!connectionRef.current) {
+        console.error("No active connection to share screen.");
+        return;
+      }
+  
+      const peer = connectionRef.current; // Get the active peer connection
+  
+      // Replace existing video track with the new screen-sharing track
+      const screenTrack = screenStream.getTracks()[0];
+  
+      // Find the sender for the video track
+      const sender = peer._pc.getSenders().find((s) => s.track?.kind === "video");
+  
+      if (sender) {
+        sender.replaceTrack(screenTrack);
+      } else {
+        peer.addTrack(screenTrack, screenStream); // Add screen track if not already there
+      }
+  
+      console.log("Screen sharing started.");
+      setIsScreenSharing(true);
+      
+      // Stop sharing when user turns off screen share
+      screenTrack.onended = () => {
+        stopSharing();
+      };
+    } catch (error) {
+      console.error("Error sharing screen:", error);
+    }
+  };
+  
+  // Function to stop sharing and revert to webcam
+  const stopSharing = async () => {
+    try {
+      const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+  
+      if (!connectionRef.current) {
+        console.error("No active connection to stop screen sharing.");
+        return;
+      }
+  
+      const peer = connectionRef.current;
+      const cameraTrack = cameraStream.getTracks()[0];
+  
+      const sender = peer._pc.getSenders().find((s) => s.track?.kind === "video");
+  
+      if (sender) {
+        sender.replaceTrack(cameraTrack);
+      }
+  
+      console.log("Switched back to camera.");
+      setIsScreenSharing(false);
+    } catch (error) {
+      console.error("Error switching back to camera:", error);
+    }
+  };
+  
+
   return (
     <SocketContext.Provider
       value={{
@@ -126,6 +191,9 @@ const ContextProvider = ({ children }) => {
         callUser,
         leaveCall,
         answerCall,
+        shareScreen,
+        stopSharing,
+        isScreenSharing,
       }}
     >
       {children}
