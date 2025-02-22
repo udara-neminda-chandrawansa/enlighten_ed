@@ -26,6 +26,8 @@ const ContextProvider = ({ children }) => {
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
+  const [jitsiAPI, setJitsiAPI] = useState(null); // jitsi
+
 
   useEffect(() => {
     navigator.mediaDevices
@@ -64,6 +66,51 @@ const ContextProvider = ({ children }) => {
     };
   }, []);
 
+  const startClassroom = (roomName) => {
+    const domain = "meet.jit.si";
+    const options = {
+      roomName,
+      width: "100%",
+      height: "100%",
+      parentNode: document.getElementById("jitsi-container"),
+      interfaceConfigOverwrite: {
+        SHOW_JITSI_WATERMARK: false,
+        SHOW_BRAND_WATERMARK: false,
+      },
+      configOverwrite: {
+        disableSimulcast: false,
+      },
+    };
+  
+    const api = new JitsiMeetExternalAPI(domain, options);
+    setJitsiAPI(api); // Now `setJitsiAPI` is defined
+  
+    api.executeCommand("displayName", "Lecturer");
+  };
+
+  const joinClassroom = (roomName) => {
+    const domain = "meet.jit.si";
+    const options = {
+      roomName,
+      width: "100%",
+      height: "100%",
+      parentNode: document.getElementById("jitsi-container"),
+      interfaceConfigOverwrite: {
+        SHOW_JITSI_WATERMARK: false,
+        SHOW_BRAND_WATERMARK: false,
+      },
+      configOverwrite: {
+        disableSimulcast: false,
+      },
+    };
+  
+    const api = new JitsiMeetExternalAPI(domain, options);
+    setJitsiAPI(api);
+  
+    api.executeCommand("displayName", "Student");
+  };
+  
+  
   const answerCall = () => {
     setCallAccepted(true);
     const peer = new Peer({ initiator: false, trickle: false, stream });
@@ -194,6 +241,8 @@ const ContextProvider = ({ children }) => {
         shareScreen,
         stopSharing,
         isScreenSharing,
+        startClassroom,
+        joinClassroom,
       }}
     >
       {children}

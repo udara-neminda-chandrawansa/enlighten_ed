@@ -39,7 +39,7 @@ const updatePeerId = async (peerId) => {
 };
 
 const Options = () => {
-  const { callAccepted, setName, callEnded, leaveCall, callUser, shareScreen, stopSharing, isScreenSharing } =
+  const { callAccepted, setName, callEnded, leaveCall, callUser, shareScreen, stopSharing, isScreenSharing,} =
     useContext(SocketContext);
   const [users, setUsers] = useState([]);
   const { me } = useContext(SocketContext);
@@ -102,7 +102,7 @@ const Options = () => {
             <p className="text-sm text-gray-500">No users available</p>
           )}
         </div>
-      </div>
+      </div>      
     </div>
   );
 };
