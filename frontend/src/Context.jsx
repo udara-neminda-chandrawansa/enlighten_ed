@@ -1,6 +1,7 @@
 import { createContext, useState, useRef, useEffect } from "react";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
+import Cookies from "js-cookie";
 
 const SocketContext = createContext();
 // local: http://localhost:8080
@@ -69,7 +70,7 @@ const ContextProvider = ({ children }) => {
   const startClassroom = (roomName) => {
     const domain = "meet.jit.si";
     const options = {
-      roomName,
+      roomName: `vpaas-magic-cookie-be52c4165cd9421185aa10e0878ff9a0/${roomName}`,
       width: "100%",
       height: "100%",
       parentNode: document.getElementById("jitsi-container"),
@@ -79,6 +80,7 @@ const ContextProvider = ({ children }) => {
       },
       configOverwrite: {
         disableSimulcast: false,
+        disableDeepLinking: true,
       },
     };
   
@@ -91,7 +93,7 @@ const ContextProvider = ({ children }) => {
   const joinClassroom = (roomName) => {
     const domain = "meet.jit.si";
     const options = {
-      roomName,
+      roomName: `vpaas-magic-cookie-be52c4165cd9421185aa10e0878ff9a0/${roomName}`,
       width: "100%",
       height: "100%",
       parentNode: document.getElementById("jitsi-container"),
@@ -101,13 +103,14 @@ const ContextProvider = ({ children }) => {
       },
       configOverwrite: {
         disableSimulcast: false,
+        disableDeepLinking: true,
       },
     };
   
     const api = new JitsiMeetExternalAPI(domain, options);
     setJitsiAPI(api);
   
-    api.executeCommand("displayName", "Student");
+    api.executeCommand("displayName", JSON.parse(Cookies.get("auth"))["username"]);
   };
   
   

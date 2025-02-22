@@ -16,8 +16,6 @@ import {
   Calendar,
 } from "lucide-react";
 import VideoPlayer from "../components/VideoPlayer";
-import Options from "../components/Options";
-import Notifications from "../components/Notifications";
 import UpdateAccount from "../components/UpdateAccount";
 import VirtualClassMgmt from "../components/VirtualClassMgmt";
 import ChatApp from "../components/ChatApp";
@@ -127,10 +125,6 @@ function Dashboard() {
             <h2 className="mb-4 text-2xl font-bold">Video Conference Space</h2>
             <div className="flex flex-col gap-6 p-4 rounded-lg bg-base-100">
               <VideoPlayer />
-              <div className="flex gap-6 max-lg:flex-col lg:py-6 lg:border-y">
-                <Options />
-                <Notifications />
-              </div>
               <ChatApp receiver={"0"} />
             </div>
           </div>
